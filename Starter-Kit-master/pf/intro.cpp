@@ -26,21 +26,45 @@ public:
     void setObject(int col, int rows, char ch);
     int getRows() const;
     int getCol() const;
+    int getZombie() const;
 };
 
 class Alien
 {
 private:
-    int life_, attack_, range_, x_, y_;
+    int life_, attack_, range_, x_, y_, zombie2_;
     char alien_; // 'A'
+    string dir_; // up, down, left, right
 
 public:
     Alien(int life = 100, int attack = 0, int range = 1);
     void alienPos(Intro &intro);
+    void move(Intro &intro);
 
 };
 
-    Alien::Alien(int life, int attack, int range){
+void Alien::move(Intro &intro){
+    dir_ = ' ';
+    intro.setObject(x_, y_ , '.');
+    dir_.clear();
+    cout << "command> "; cin >> dir_; cout << endl;
+
+    if(dir_ == "up"){
+        y_++;
+    }
+    else if(dir_ == "down"){
+        y_--;
+    }
+    else if(dir_ == "left"){
+        x_--;;
+    }
+    else if(dir_ == "right"){
+        x_++;
+    }
+    intro.setObject(x_, y_, alien_);
+}
+
+Alien::Alien(int life, int attack, int range){
         life = life_;
         attack = attack_;
         range = range;
@@ -50,6 +74,7 @@ void Alien::alienPos(Intro &intro){
     alien_ = {'A'};
     y_ = (intro.getRows() + 1) / 2;
     x_ = (intro.getCol() + 1) / 2;
+    zombie2_ = intro.getZombie();
     intro.setObject(x_ , y_, alien_);
 }
 
@@ -59,6 +84,10 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie)
     mapinit(rows, col, zombie);
     alien.alienPos(intro); 
     displayGame();
+}
+
+int Intro::getZombie() const {
+    return zombie_;
 }
 
 int Intro::getCol() const {
@@ -92,7 +121,7 @@ void Intro::mapinit(int rows, int col, int zombie)
     {
         for (int j = 0; j < col_; j++)
         {
-            noObj = rand() % noObjects; // generating random characters for some reason.
+            noObj = rand() % noObjects; // generating random characters
             map_[i][j] = objects[noObj];
         }
     }
@@ -108,7 +137,7 @@ Intro::Intro(int rows, int col, int zombie, string choice)
 }
 
 void Intro::displayGame() const
-{
+{   Intro intro;
     // to put the title in the middle part of the board.
     cout << setw((col_ + 2) / 2) << ". : Alien vs Zombie : ." << endl;
     for (int i = 0; i < rows_; i++)
@@ -119,7 +148,7 @@ void Intro::displayGame() const
             cout << "+-";
         }
         cout << "+" << endl;
-        cout << setw(0) << (rows_ - i);
+        cout << setw(0) << (i+1);
         for (int j = 0; j < col_; j++)
         {
             cout << "|" << map_[i][j];
@@ -198,7 +227,7 @@ void Intro::displayIntro()
         {
             choice_.clear();
             cout << "yes" << endl;
-            this->changeSettings();
+            changeSettings();
         }
 
         else if ((choice_ != "y" && choice_ != "Y") && (choice_ != "n" && choice_ != "N"))
@@ -212,7 +241,7 @@ void Intro::displayIntro()
                 if (choice_ == "y" || choice_ == "Y")
                 {
                     choice_.clear();
-                    this->changeSettings();
+                    changeSettings();
                     break;
                 }
 
