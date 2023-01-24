@@ -25,6 +25,7 @@ public:
     void setObject(int col, int rows, char ch);
     int getRows() const;
     int getCol() const;
+    int getZombie() const;
 };
 
 class Alien
@@ -32,9 +33,11 @@ class Alien
 private:
     int life_, attack_, range_, x_, y_;
     char alien_; // 'A'
+    string dir_;
 
 public:
     Alien(int life = 100, int attack = 0, int range = 1);
     void alienPos(Intro &intro);
+    void move(Intro &intro);
 
 };
