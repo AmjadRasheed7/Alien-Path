@@ -27,6 +27,11 @@ void run(){
     Alien alien;
     alien.alienPos(intro); 
     intro.displayIntro();
+    while (true){
+    alien.move(intro);
+    pf::ClearScreen();
+    intro.displayGame();
+    }
 }
 
 int main()
