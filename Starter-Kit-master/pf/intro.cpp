@@ -89,6 +89,7 @@ void Alien::move(Intro &intro){
     // else if(dir_ == "right"){
     //     intro.setObject(x_ - 1, y_, empty);
     // }
+    intro.setObject(x_, y_ , alien_);
 }
 
 Alien::Alien(int life, int attack, int range){
@@ -110,6 +111,7 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     changed_ = true;
     Alien alien;
     int n = 0;
+    // to make sure the objects in the map does not change every alien movement.
     while(n < 1){
     mapinit(rows, col, zombie);
     n++;
