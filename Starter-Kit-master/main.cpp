@@ -22,16 +22,23 @@
 using namespace std;
 
 void run(){
-    srand(time(NULL)); // random map everytime
+    
     Intro intro;
     Alien alien;
     alien.alienPos(intro); 
     intro.displayIntro();
-    while (true){
+    if(intro.getChanged() == true){
+        pf::ClearScreen();
+        intro.newBoard(intro, intro.getRows(), intro.getCol(), intro.getZombie(), intro.getChanged());
+    }
+    else{
+    while(true){
+    cout << "test 2";
     alien.move(intro);
     pf::ClearScreen();
     intro.displayGame();
-    }
+    }}
+    
 }
 
 int main()
