@@ -13,20 +13,22 @@ class Intro
 private:
     string choice_;
     int rows_, col_, zombie_;
+    bool changed_;
     vector<vector<char>> map_;
 
 public:
     int rows, col, zombie;
-    Intro(int rows = 5, int col = 9, int zombie = 1, string choice = "");
+    Intro(int rows = 5, int col = 9, int zombie = 1, string choice = "", bool changed = false);
     void changeSettings();
     void displayIntro();
-    void displayGame() const;
+    void displayGame();
     void mapinit(int rows, int col, int zombie);
-    void newBoard(Intro &intro, int rows, int col, int zombie);
+    void newBoard(Intro &intro, int rows, int col, int zombie, bool changed);
     void setObject(int col, int rows, char ch);
     int getRows() const;
     int getCol() const;
     int getZombie() const;
+    bool getChanged() const;
 };
 
 class Alien
@@ -37,13 +39,26 @@ private:
     string dir_; // up, down, left, right
 
 public:
-    Alien(int life = 100, int attack = 0, int range = 1);
+    Alien(int life = 100, int attack = 0, int range = 0);
     void alienPos(Intro &intro);
     void move(Intro &intro);
+    void alienDisplay(Intro &intro, Alien &alien);
+    void charAttri();
 
 };
 
+void Alien::charAttri(){
+    int zombie_life[] = {100, 150, 200, 250, 300};
+    int zombie_attack[] = {5, 10, 15, 20};
+
+}
+
+void Alien::alienDisplay(Intro &intro, Alien &alien){
+    intro.displayGame();
+}
+
 void Alien::move(Intro &intro){
+    char empty = ' ';
     dir_ = ' ';
     intro.setObject(x_, y_ , '.');
     dir_.clear();
@@ -61,13 +76,25 @@ void Alien::move(Intro &intro){
     else if(dir_ == "right"){
         x_++;
     }
-    intro.setObject(x_, y_, alien_);
+    // intro.setObject(x_, y_, alien_);
+    // if(dir_ == "up"){
+    //     intro.setObject(x_, y_ - 1, empty);
+    // }
+    // else if(dir_ == "down"){
+    //     intro.setObject(x_, y_ + 1, empty);
+    // }
+    // else if(dir_ == "left"){
+    //     intro.setObject(x_ + 1, y_, empty);
+    // }
+    // else if(dir_ == "right"){
+    //     intro.setObject(x_ - 1, y_, empty);
+    // }
 }
 
 Alien::Alien(int life, int attack, int range){
-        life = life_;
-        attack = attack_;
-        range = range;
+        life_ = life;
+        attack_ = attack;
+        range_ = range;
     }
 
 void Alien::alienPos(Intro &intro){
@@ -78,12 +105,27 @@ void Alien::alienPos(Intro &intro){
     intro.setObject(x_ , y_, alien_);
 }
 
-void Intro::newBoard(Intro &intro, int rows, int col, int zombie)
+void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
 {  
+    changed_ = true;
     Alien alien;
+    int n = 0;
+    while(n < 1){
     mapinit(rows, col, zombie);
-    alien.alienPos(intro); 
+    n++;
+    break;
+    }
+    alien.alienPos(intro);
+    while(true){
+    pf::ClearScreen();
     displayGame();
+    alien.move(intro);
+    }
+}
+
+
+bool Intro::getChanged() const {
+    return changed_;
 }
 
 int Intro::getZombie() const {
@@ -101,6 +143,8 @@ int Intro::getRows() const {
 void Intro::setObject(int col, int rows, char ch){
     map_[rows_ - rows][col - 1] = ch;
 }
+
+
 
 void Intro::mapinit(int rows, int col, int zombie)
 {
@@ -122,22 +166,25 @@ void Intro::mapinit(int rows, int col, int zombie)
         for (int j = 0; j < col_; j++)
         {
             noObj = rand() % noObjects; // generating random characters
+            
             map_[i][j] = objects[noObj];
         }
     }
 }
 
-Intro::Intro(int rows, int col, int zombie, string choice)
+Intro::Intro(int rows, int col, int zombie, string choice, bool changed)
 {
     rows_ = rows;
     col_ = col;
     zombie_ = zombie;
     choice_ = choice;
+    changed_ = changed;
     mapinit(rows, col, zombie);
 }
 
-void Intro::displayGame() const
-{   Intro intro;
+void Intro::displayGame()
+{   
+
     // to put the title in the middle part of the board.
     cout << setw((col_ + 2) / 2) << ". : Alien vs Zombie : ." << endl;
     for (int i = 0; i < rows_; i++)
@@ -307,5 +354,6 @@ void Intro::changeSettings()
     cout << "Settings updated" << endl;
     pf::Pause();
     pf::ClearScreen();
-    intro.newBoard(intro, rows_, col_, zombie_);
+    changed_ = true;
+    intro.newBoard(intro, rows_, col_, zombie_, changed_);
 }
