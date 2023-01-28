@@ -25,15 +25,15 @@ void run(){
     
     Intro intro;
     Alien alien;
+   
     alien.alienPos(intro); 
     intro.displayIntro();
     if(intro.getChanged() == true){
         pf::ClearScreen();
         intro.newBoard(intro, intro.getRows(), intro.getCol(), intro.getZombie(), intro.getChanged());
     }
-    else{
+    else{  //alien.randomAttri();
     while(true){
-    cout << "test 2";
     alien.move(intro);
     pf::ClearScreen();
     intro.displayGame();
@@ -42,7 +42,7 @@ void run(){
 }
 
 int main()
-{   
+{   srand(time(NULL));
     run();
    
 }
