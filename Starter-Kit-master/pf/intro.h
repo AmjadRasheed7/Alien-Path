@@ -30,18 +30,25 @@ public:
     bool getChanged() const;
 };
 
+
 class Alien
 {
 private:
-    int life_, attack_, range_, x_, y_;
+    int life_, attack_, range_, x_, y_, zombie2_;
     char alien_; // 'A'
-    string dir_;
-
+    string dir_; // up, down, left, right
+ 
+ 
 public:
-    Alien(int life = 100, int attack = 0, int range = 1);
+   int zombie_life[5] = {100, 150, 200, 250, 300};
+    int zombie_attack[4] = {5, 10, 15, 20};
+    int zombie_range[3] = {1, 2, 3};
+    int random_life, random_attack, random_range,* RandAttack, * Randlife, * Randrange;
+    Alien(int life = 100, int attack = 0, int range = 0);
     void alienPos(Intro &intro);
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
     void charAttri();
+    void randomAttri();
 
 };
