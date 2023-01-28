@@ -37,43 +37,74 @@ private:
     int life_, attack_, range_, x_, y_, zombie2_;
     char alien_; // 'A'
     string dir_; // up, down, left, right
-
+ 
 public:
+   int zombie_life[5] = {100, 150, 200, 250, 300};
+    int zombie_attack[4] = {5, 10, 15, 20};
+    int zombie_range[3] = {1, 2, 3};
+    int random_life, random_attack, random_range,* RandAttack, * Randlife, * Randrange;
     Alien(int life = 100, int attack = 0, int range = 0);
     void alienPos(Intro &intro);
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
     void charAttri();
-
+    void randomAttri();
+  
 };
 
-void Alien::charAttri(){
-    int zombie_life[] = {100, 150, 200, 250, 300};
-    int zombie_attack[] = {5, 10, 15, 20};
+
+
+void Alien::randomAttri()
+{
+    
+  
+    // cout << random_life << endl;
+    // cout << random_attack << endl;
+    // cout << random_range << endl;
+    
+    
+}
+void Alien::charAttri()
+{
+    random_life = rand() % size(zombie_life);
+    random_attack = rand() % size(zombie_attack);
+    random_range = rand() % size(zombie_range);
+    cout << "Alien   : Life " << life_ << " attack " << attack_ << endl;
+    cout << "Zombie " << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] << endl;
 
 }
 
-void Alien::alienDisplay(Intro &intro, Alien &alien){
+void Alien::alienDisplay(Intro &intro, Alien &alien)
+{
     intro.displayGame();
 }
 
-void Alien::move(Intro &intro){
+void Alien::move(Intro &intro)
+{
     char empty = ' ';
     dir_ = ' ';
-    intro.setObject(x_, y_ , '.');
+    intro.setObject(x_, y_, '.');
     dir_.clear();
-    cout << "command> "; cin >> dir_; cout << endl;
+    cout << "command> ";
+    cin >> dir_;
+    cout << endl;
+    if (dir_ == "up")
+    {
 
-    if(dir_ == "up"){
         y_++;
     }
-    else if(dir_ == "down"){
+
+    if (dir_ == "down")
+    {
         y_--;
     }
-    else if(dir_ == "left"){
-        x_--;;
+    else if (dir_ == "left")
+    {
+        x_--;
+        ;
     }
-    else if(dir_ == "right"){
+    else if (dir_ == "right")
+    {
         x_++;
     }
     // intro.setObject(x_, y_, alien_);
@@ -89,64 +120,70 @@ void Alien::move(Intro &intro){
     // else if(dir_ == "right"){
     //     intro.setObject(x_ - 1, y_, empty);
     // }
-    intro.setObject(x_, y_ , alien_);
+    intro.setObject(x_, y_, alien_);
 }
 
-Alien::Alien(int life, int attack, int range){
-        life_ = life;
-        attack_ = attack;
-        range_ = range;
-    }
+Alien::Alien(int life, int attack, int range)
+{   life_ = life;
+    attack_ = attack;
+    range_ = range;
+}
 
-void Alien::alienPos(Intro &intro){
+void Alien::alienPos(Intro &intro)
+{
     alien_ = {'A'};
     y_ = (intro.getRows() + 1) / 2;
     x_ = (intro.getCol() + 1) / 2;
     zombie2_ = intro.getZombie();
-    intro.setObject(x_ , y_, alien_);
+    intro.setObject(x_, y_, alien_);
 }
 
 void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
-{  
+{
     changed_ = true;
     Alien alien;
     int n = 0;
     // to make sure the objects in the map does not change every alien movement.
-    while(n < 1){
-    mapinit(rows, col, zombie);
-    n++;
-    break;
+    while (n < 1)
+    {
+        mapinit(rows, col, zombie);
+
+        n++;
+        break;
     }
     alien.alienPos(intro);
-    while(true){
-    pf::ClearScreen();
-    displayGame();
-    alien.move(intro);
+    while (true)
+    {
+        pf::ClearScreen();
+        displayGame();
+        alien.move(intro);
     }
 }
 
-
-bool Intro::getChanged() const {
+bool Intro::getChanged() const
+{
     return changed_;
 }
 
-int Intro::getZombie() const {
+int Intro::getZombie() const
+{
     return zombie_;
 }
 
-int Intro::getCol() const {
+int Intro::getCol() const
+{
     return col_;
 }
 
-int Intro::getRows() const {
+int Intro::getRows() const
+{
     return rows_;
 }
 
-void Intro::setObject(int col, int rows, char ch){
+void Intro::setObject(int col, int rows, char ch)
+{
     map_[rows_ - rows][col - 1] = ch;
 }
-
-
 
 void Intro::mapinit(int rows, int col, int zombie)
 {
@@ -168,7 +205,7 @@ void Intro::mapinit(int rows, int col, int zombie)
         for (int j = 0; j < col_; j++)
         {
             noObj = rand() % noObjects; // generating random characters
-            
+
             map_[i][j] = objects[noObj];
         }
     }
@@ -185,7 +222,8 @@ Intro::Intro(int rows, int col, int zombie, string choice, bool changed)
 }
 
 void Intro::displayGame()
-{   
+{
+    Alien alien;
 
     // to put the title in the middle part of the board.
     cout << setw((col_ + 2) / 2) << ". : Alien vs Zombie : ." << endl;
@@ -197,7 +235,7 @@ void Intro::displayGame()
             cout << "+-";
         }
         cout << "+" << endl;
-        cout << setw(0) << (i+1);
+        cout << setw(0) << (i + 1);
         for (int j = 0; j < col_; j++)
         {
             cout << "|" << map_[i][j];
@@ -234,6 +272,7 @@ void Intro::displayGame()
     }
     cout << endl
          << endl;
+    alien.charAttri();
 }
 
 void Intro::displayIntro()
@@ -329,16 +368,15 @@ void Intro::changeSettings()
     cout << endl;
 
     cout << "Enter rows => ";
-    while (!(cin >> rows_)||(rows_ % 2 == 0)||(rows_ <= 0)) //Even positive integer
+    while (!(cin >> rows_) || (rows_ % 2 == 0) || (rows_ <= 0)) // Even positive integer
     {
-            cout << "Invalid input. Please enter an odd integer value => ";
-            cin.clear();
-            cin.ignore(INT_MAX, '\n'); // to clear input buffer
-        
+        cout << "Invalid input. Please enter an odd integer value => ";
+        cin.clear();
+        cin.ignore(INT_MAX, '\n'); // to clear input buffer
     }
 
     cout << "Enter columns => ";
-    while (!(cin >> col_)||(col_ % 2 == 0)||(col_ <= 0)) //Even positive integer
+    while (!(cin >> col_) || (col_ % 2 == 0) || (col_ <= 0)) // Even positive integer
     {
         cout << "Invalid input. Please enter an odd integer value => ";
         cin.clear();
