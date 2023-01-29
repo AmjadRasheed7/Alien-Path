@@ -2,7 +2,7 @@
 
 Alien Path is an exciting text-based puzzle game where the players are allowed to navigate through space, solving puzzle and have a great fast-paced gameplay experience defeeating zombies to progress. With the feature of settings to change, we allow the players to experience the game in multiple difficulties, to make sure that it is a thrilling gameplay for any players. This game combines strategy and elemtns of puzzle to provide unique gaming experience. Defend the universe and defeat all the zombies.
 
-![Title image of alien path](https://prnt.sc/2H0QxsxxkHsL "alien path")
+![Title image of alien path](https://prnt.sc/2H0QxsxxkHsL)
 
 Please provide the YouTube link to your [Video Demo](https://youtube.com). video from amjad
 
