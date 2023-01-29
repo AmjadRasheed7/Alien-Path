@@ -11,7 +11,7 @@ Please provide the YouTube link to your [Video Demo](https://youtube.com). video
 To compile the program, type the given code in the terminal using g++ compiler.
 
 ```
-g++ pf\*.cpp main.cpp -o a ......
+g++ pf\*.cpp main.cpp -o (anything)
 ```
 
 ## User Manual
