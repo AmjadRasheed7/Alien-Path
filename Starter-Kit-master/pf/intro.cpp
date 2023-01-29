@@ -70,7 +70,7 @@ void Alien::charAttri()
     random_attack = rand() % size(zombie_attack);
     random_range = rand() % size(zombie_range);
     cout << "Alien   : Life " << life_ << " attack " << attack_ << endl;
-    cout << "Zombie " << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] << endl;
+    cout << "Zombie " << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] <<" range : " << zombie_range[random_range] <<endl;
 
 }
 
@@ -314,7 +314,6 @@ void Intro::displayIntro()
         if (choice_ == "y" || choice_ == "Y")
         {
             choice_.clear();
-            cout << "yes" << endl;
             changeSettings();
         }
 
@@ -372,7 +371,7 @@ void Intro::changeSettings()
     {
         cout << "Invalid input. Please enter an odd integer value => ";
         cin.clear();
-        cin.ignore(INT_MAX, '\n'); // to clear input buffer
+        cin.ignore(INT_MAX, '\n'); // to clear input buffer 
     }
 
     cout << "Enter columns => ";
