@@ -1,14 +1,12 @@
-// *********************************************************
-// Course: TCP1101 PROGRAMMING FUNDAMENTALS
-// Year: Trimester 1, 2022/23 (T2215)
-// Lab: TxxL
-// Names: MEMBER_NAME_1 | MEMBER_NAME_2 | MEMBER_NAME_3
-// IDs: MEMBER_ID_1 | MEMBER_ID_2 | MEMBER_ID_3
-// Emails: MEMBER_EMAIL_1 | MEMBER_EMAIL_2 | MEMBER_EMAIL_3
-// Phones: MEMBER_PHONE_1 | MEMBER_PHONE_2 | MEMBER_PHONE_3
-// *********************************************************
-
-// TODO: Fill in the missing information above and delete this line.
+// ************************************************************************************************************
+// Course: TCP1101 PROGRAMMING FUNDAMENTALS                                                                   *
+// Year: Trimester 1, 2022/23 (T2215)                                                                         *
+// Lab: TT7L, TT6L                                                                                            *
+// Names: Amgad Elrashid Gurashi Eltayeb | Balchi Maher M.  N. | Abdelrahman Mohamed Hassan Mohamed           *
+// IDs: 1211307882 | 1221302826 | 1211305311                                                                  *
+// Emails: 1211307882@student.mmu.edu.my | 1221302826@student.mmu.edu.my | 1211305311@student.mmu.edu.my      *
+// Phones: 01160845164 | 017-3262018 | +60 17-298 4328                                                        *
+// ************************************************************************************************************
 
 #include "pf/helper.h"
 #include "pf/intro.h"
@@ -25,14 +23,16 @@ void run(){
     
     Intro intro;
     Alien alien;
-   
+    // initialisers
     alien.alienPos(intro); 
+    // alien.charAttri();
     intro.displayIntro();
+    // when the user change settings
     if(intro.getChanged() == true){
         pf::ClearScreen();
         intro.newBoard(intro, intro.getRows(), intro.getCol(), intro.getZombie(), intro.getChanged());
     }
-    else{  //alien.randomAttri();
+    else{
     while(true){
     alien.move(intro);
     pf::ClearScreen();
@@ -42,7 +42,8 @@ void run(){
 }
 
 int main()
-{   srand(time(NULL));
+{   
+    srand(time(NULL));
     run();
    
 }
