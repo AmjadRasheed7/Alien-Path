@@ -335,6 +335,7 @@ void Intro::displayIntro()
                 else if (choice_ == "n" || choice_ == "N")
                 {
                     choice_.clear();
+                    pf::ClearScreen();
                     displayGame();
                     break;
                 }
@@ -343,6 +344,7 @@ void Intro::displayIntro()
         else if (choice_ == "n" || choice_ == "N")
         {
             choice_.clear();
+            pf::ClearScreen();
             displayGame();
             break;
         }
