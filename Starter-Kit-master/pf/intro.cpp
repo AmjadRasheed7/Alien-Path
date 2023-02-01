@@ -29,6 +29,7 @@ public:
     int getCol() const;
     int getZombie() const;
     bool getChanged() const;
+    void objectExist(int x, int y);
 };
 
 class Alien
@@ -39,7 +40,7 @@ private:
     string dir_; // up, down, left, right
  
 public:
-   int zombie_life[5] = {100, 150, 200, 250, 300};
+    int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
     int random_life, random_attack, random_range,* RandAttack, * Randlife, * Randrange;
@@ -49,10 +50,18 @@ public:
     void alienDisplay(Intro &intro, Alien &alien);
     void charAttri();
     void randomAttri();
+    int newAlienPosX(Intro &intro);
+    int newAlienPosY(Intro &intro);
   
 };
 
 
+int Alien::newAlienPosX(Intro &intro){
+    return x_;
+}
+int Alien::newAlienPosY(Intro &intro){
+    return y_;
+}
 
 void Alien::randomAttri()
 {
@@ -79,33 +88,81 @@ void Alien::alienDisplay(Intro &intro, Alien &alien)
     intro.displayGame();
 }
 
+// when alien reaches boundary, when alien hits rock object, when he attack a zombie but the zombie lives the attack.
+
 void Alien::move(Intro &intro)
 {
     char empty = ' ';
     dir_ = ' ';
-    intro.setObject(x_, y_, '.');
     dir_.clear();
     cout << "command> ";
     cin >> dir_;
     cout << endl;
+    pf::ClearScreen();
     if (dir_ == "up")
     {
-
+        while(true)
+        if(newAlienPosY(intro) < intro.getRows()|| newAlienPosY(intro) < intro.getRows()){
+        
+        intro.setObject(x_, y_, '.');
         y_++;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        pf::Pause();
+        pf::ClearScreen();
+        }
+        else{
+            break;
+        }
     }
 
     if (dir_ == "down")
     {
+        while(true)
+        if(newAlienPosY(intro) > 1|| newAlienPosY(intro) > 1){
+        
+        intro.setObject(x_, y_, '.');
         y_--;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        pf::Pause();
+        pf::ClearScreen();
+        }
+        else{
+            break;
+        }
     }
     else if (dir_ == "left")
     {
+        while(true)
+        if(newAlienPosX(intro) > 1 || newAlienPosX(intro) > 1){
+        
+        intro.setObject(x_, y_, '.');
         x_--;
-        ;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        pf::Pause();
+        pf::ClearScreen();
+        }
+        else{
+            break;
+        }
     }
     else if (dir_ == "right")
     {
+        while(true)
+        if(newAlienPosX(intro) < intro.getCol() || newAlienPosX(intro) < intro.getCol()){
+        
+        intro.setObject(x_, y_, '.');
         x_++;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        pf::Pause();
+        pf::ClearScreen();
+        }
+        else{
+            break;
+        }
     }
     // intro.setObject(x_, y_, alien_);
     // if(dir_ == "up"){
@@ -120,7 +177,7 @@ void Alien::move(Intro &intro)
     // else if(dir_ == "right"){
     //     intro.setObject(x_ - 1, y_, empty);
     // }
-    intro.setObject(x_, y_, alien_);
+    // intro.setObject(x_, y_, alien_);
 }
 
 Alien::Alien(int life, int attack, int range)
@@ -160,10 +217,23 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     }
 }
 
+void Intro::objectExist(int x, int y){
+    if(map_[x + 1][y] == 'r'){
+        cout << "true";
+    }
+    else if(map_[x][y + 1] == 'r'){
+        cout << "true";
+    }
+    else{
+        cout << "false";
+    }
+}
+
 bool Intro::getChanged() const
 {
     return changed_;
 }
+
 
 int Intro::getZombie() const
 {
@@ -398,3 +468,14 @@ void Intro::changeSettings()
     changed_ = true;
     intro.newBoard(intro, rows_, col_, zombie_, changed_);
 }
+
+
+
+
+/* 
+display intro
+display game
+
+
+
+ */
