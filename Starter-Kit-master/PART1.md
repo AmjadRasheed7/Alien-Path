@@ -2,13 +2,19 @@
 
 ## Video Demo
 
-Please provide the YouTube link to your [Video Demo](https://youtube.com). amjad's video
+https://www.youtube.com/watch?v=UicshVxMjfg
 
 ## Minimum Requirements
 
-### Completed
+Overview of Alien vs. Zombie
+Game Board
+Game Characters
+-   Attributes
+Game Objects
+Game Controls
+-   up, down, left, right
 
-List all the features completed.
+### Completed
 
 1. Default settings.
 2. Created the game board successfully with the title.
@@ -20,8 +26,6 @@ List all the features completed.
 
 
 ### To Do
-
-List all the features not yet done. Remove this section if there is no incomplete requirements.
 
 1. Fix the zombie life, attack, range arrays and printing them out correctly.
 2. Modify the alien movement, making him move in one direction until it reaches a certain border or object.
