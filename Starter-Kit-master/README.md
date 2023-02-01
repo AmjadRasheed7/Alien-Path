@@ -4,7 +4,9 @@ Alien Path is an exciting text-based puzzle game where the players are allowed t
 
 ![Alien_path_title](https://i.ibb.co/bQx2tz9/image-2023-01-30-002758850.png "Alien Path")
 
-Please provide the YouTube link to your [Video Demo](https://youtube.com). video from amjad
+## Video Demo
+
+https://youtu.be/UicshVxMjfg
 
 ## Compilation Instructions
 
