@@ -29,6 +29,7 @@ public:
     int getCol() const;
     int getZombie() const;
     bool getChanged() const;
+    void objectExist(int x, int y);
 };
 
 class Alien
@@ -37,33 +38,49 @@ private:
     int life_, attack_, range_, x_, y_, zombie2_;
     char alien_; // 'A'
     string dir_; // up, down, left, right
+ 
+public:
     int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
-    int random_life, random_attack, random_range;
-
-public:
+    int random_life, random_attack, random_range,* RandAttack, * Randlife, * Randrange;
     Alien(int life = 100, int attack = 0, int range = 0);
     void alienPos(Intro &intro);
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
     void charAttri();
     void randomAttri();
+    int newAlienPosX(Intro &intro);
+    int newAlienPosY(Intro &intro);
+  
 };
 
+
+int Alien::newAlienPosX(Intro &intro){
+    return x_;
+}
+int Alien::newAlienPosY(Intro &intro){
+    return y_;
+}
+
 void Alien::randomAttri()
+{
+    
+  
+    // cout << random_life << endl;
+    // cout << random_attack << endl;
+    // cout << random_range << endl;
+    
+    
+}
+void Alien::charAttri()
 {
     random_life = rand() % size(zombie_life);
     random_attack = rand() % size(zombie_attack);
     random_range = rand() % size(zombie_range);
-    cout << random_life << endl;
-    cout << random_attack << endl;
-    cout << random_range << endl;
-}
-void Alien::charAttri()
-{
     cout << "Alien   : Life " << life_ << " attack " << attack_ << endl;
-    cout << "Zombie " << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] << " range : " << zombie_range[random_range] << endl;
+    cout << "Zombie " << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] <<" range : " << zombie_range[random_range] <<endl;
+
 }
 
 void Alien::alienDisplay(Intro &intro, Alien &alien)
@@ -71,33 +88,81 @@ void Alien::alienDisplay(Intro &intro, Alien &alien)
     intro.displayGame();
 }
 
+// when alien reaches boundary, when alien hits rock object, when he attack a zombie but the zombie lives the attack.
+
 void Alien::move(Intro &intro)
 {
     char empty = ' ';
     dir_ = ' ';
-    intro.setObject(x_, y_, '.');
     dir_.clear();
     cout << "command> ";
     cin >> dir_;
     cout << endl;
+    pf::ClearScreen();
     if (dir_ == "up")
     {
-
+        while(true)
+        if(newAlienPosY(intro) < intro.getRows()|| newAlienPosY(intro) < intro.getRows()){
+        
+        intro.setObject(x_, y_, '.');
         y_++;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        pf::Pause();
+        pf::ClearScreen();
+        }
+        else{
+            break;
+        }
     }
 
     if (dir_ == "down")
     {
+        while(true)
+        if(newAlienPosY(intro) > 1|| newAlienPosY(intro) > 1){
+        
+        intro.setObject(x_, y_, '.');
         y_--;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        pf::Pause();
+        pf::ClearScreen();
+        }
+        else{
+            break;
+        }
     }
     else if (dir_ == "left")
     {
+        while(true)
+        if(newAlienPosX(intro) > 1 || newAlienPosX(intro) > 1){
+        
+        intro.setObject(x_, y_, '.');
         x_--;
-        ;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        pf::Pause();
+        pf::ClearScreen();
+        }
+        else{
+            break;
+        }
     }
     else if (dir_ == "right")
     {
+        while(true)
+        if(newAlienPosX(intro) < intro.getCol() || newAlienPosX(intro) < intro.getCol()){
+        
+        intro.setObject(x_, y_, '.');
         x_++;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        pf::Pause();
+        pf::ClearScreen();
+        }
+        else{
+            break;
+        }
     }
     // intro.setObject(x_, y_, alien_);
     // if(dir_ == "up"){
@@ -112,15 +177,13 @@ void Alien::move(Intro &intro)
     // else if(dir_ == "right"){
     //     intro.setObject(x_ - 1, y_, empty);
     // }
-    intro.setObject(x_, y_, alien_);
+    // intro.setObject(x_, y_, alien_);
 }
 
 Alien::Alien(int life, int attack, int range)
-{
-    life_ = life;
+{   life_ = life;
     attack_ = attack;
     range_ = range;
-   
 }
 
 void Alien::alienPos(Intro &intro)
@@ -141,7 +204,7 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     while (n < 1)
     {
         mapinit(rows, col, zombie);
-        alien.randomAttri();
+
         n++;
         break;
     }
@@ -150,8 +213,19 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     {
         pf::ClearScreen();
         displayGame();
-        alien.charAttri();
         alien.move(intro);
+    }
+}
+
+void Intro::objectExist(int x, int y){
+    if(map_[x + 1][y] == 'r'){
+        cout << "true";
+    }
+    else if(map_[x][y + 1] == 'r'){
+        cout << "true";
+    }
+    else{
+        cout << "false";
     }
 }
 
@@ -159,6 +233,7 @@ bool Intro::getChanged() const
 {
     return changed_;
 }
+
 
 int Intro::getZombie() const
 {
@@ -267,7 +342,7 @@ void Intro::displayGame()
     }
     cout << endl
          << endl;
-    // alien.charAttri();
+    alien.charAttri();
 }
 
 void Intro::displayIntro()
@@ -332,7 +407,6 @@ void Intro::displayIntro()
                     choice_.clear();
                     pf::ClearScreen();
                     displayGame();
-                    // alien.charAttri();
                     break;
                 }
             }
@@ -342,7 +416,6 @@ void Intro::displayIntro()
             choice_.clear();
             pf::ClearScreen();
             displayGame();
-            // alien.charAttri();
             break;
         }
         break;
@@ -370,7 +443,7 @@ void Intro::changeSettings()
     {
         cout << "Invalid input. Please enter an odd integer value => ";
         cin.clear();
-        cin.ignore(INT_MAX, '\n'); // to clear input buffer
+        cin.ignore(INT_MAX, '\n'); // to clear input buffer 
     }
 
     cout << "Enter columns => ";
@@ -395,3 +468,14 @@ void Intro::changeSettings()
     changed_ = true;
     intro.newBoard(intro, rows_, col_, zombie_, changed_);
 }
+
+
+
+
+/* 
+display intro
+display game
+
+
+
+ */
