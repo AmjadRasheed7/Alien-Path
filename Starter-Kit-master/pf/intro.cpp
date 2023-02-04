@@ -6,6 +6,7 @@
 #include <array>
 #include <random>
 #include <ctime>
+#include <string>
 using namespace std;
 
 class Intro
@@ -29,7 +30,12 @@ public:
     int getCol() const;
     int getZombie() const;
     bool getChanged() const;
-    void objectExist(int x, int y);
+    bool isRock(int x, int y);
+    bool isZombie(int x, int y);
+    bool isArrowUp(int x, int y);
+    bool isArrowDown(int x, int y);
+    bool isArrowLeft(int x, int y);
+    bool isArrowRight(int x, int y);
 };
 
 class Alien
@@ -92,6 +98,7 @@ void Alien::alienDisplay(Intro &intro, Alien &alien)
 
 void Alien::move(Intro &intro)
 {
+
     char empty = ' ';
     dir_ = ' ';
     dir_.clear();
@@ -103,7 +110,9 @@ void Alien::move(Intro &intro)
     {
         while(true)
         if(newAlienPosY(intro) < intro.getRows()|| newAlienPosY(intro) < intro.getRows()){
-        
+            if(intro.isRock(x_ , y_ +1)){
+                break;
+            }
         intro.setObject(x_, y_, '.');
         y_++;
         intro.setObject(x_, y_, alien_);
@@ -118,9 +127,11 @@ void Alien::move(Intro &intro)
 
     if (dir_ == "down")
     {
-        while(true)
+         while(true)
         if(newAlienPosY(intro) > 1|| newAlienPosY(intro) > 1){
-        
+            if(intro.isRock(x_, y_ - 1)){
+                break;
+            }
         intro.setObject(x_, y_, '.');
         y_--;
         intro.setObject(x_, y_, alien_);
@@ -136,7 +147,9 @@ void Alien::move(Intro &intro)
     {
         while(true)
         if(newAlienPosX(intro) > 1 || newAlienPosX(intro) > 1){
-        
+            if(intro.isRock(x_ -1, y_)){
+                break;
+            }
         intro.setObject(x_, y_, '.');
         x_--;
         intro.setObject(x_, y_, alien_);
@@ -152,7 +165,9 @@ void Alien::move(Intro &intro)
     {
         while(true)
         if(newAlienPosX(intro) < intro.getCol() || newAlienPosX(intro) < intro.getCol()){
-        
+            if(intro.isRock(x_ + 1, y_)){
+                break;
+            }
         intro.setObject(x_, y_, '.');
         x_++;
         intro.setObject(x_, y_, alien_);
@@ -195,6 +210,31 @@ void Alien::alienPos(Intro &intro)
     intro.setObject(x_, y_, alien_);
 }
 
+bool Intro::isZombie(int x, int y){
+    return map_[rows_ - y][x - 1] == '1';
+    return map_[rows_ - y][x - 1] == '2';
+    return map_[rows_ - y][x - 1] == '3';
+    return map_[rows_ - y][x - 1] == '4';
+    return map_[rows_ - y][x - 1] == '5';
+    return map_[rows_ - y][x - 1] == '6';
+    return map_[rows_ - y][x - 1] == '7';
+    return map_[rows_ - y][x - 1] == '8';
+    return map_[rows_ - y][x - 1] == '9';
+}
+
+bool Intro::isArrowUp(int x, int y){
+     return map_[rows_ - y][x - 1] == '^';
+}
+bool Intro::isArrowRight(int x, int y){
+     return map_[rows_ - y][x - 1] == '>';
+}
+bool Intro::isArrowLeft(int x, int y){
+     return map_[rows_ - y][x - 1] == '<';
+}
+bool Intro::isArrowDown(int x, int y){
+     return map_[rows_ - y][x - 1] == 'v';
+}
+
 void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
 {
     changed_ = true;
@@ -217,17 +257,9 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     }
 }
 
-void Intro::objectExist(int x, int y){
-    if(map_[x + 1][y] == 'r'){
-        cout << "true";
+bool Intro::isRock(int x, int y){
+    return map_[rows_ - y][x-1] == 'r'; 
     }
-    else if(map_[x][y + 1] == 'r'){
-        cout << "true";
-    }
-    else{
-        cout << "false";
-    }
-}
 
 bool Intro::getChanged() const
 {
@@ -299,23 +331,24 @@ void Intro::displayGame()
     cout << setw((col_ + 2) / 2) << ". : Alien vs Zombie : ." << endl;
     for (int i = 0; i < rows_; i++)
     { // row is Y, col is X
-        cout << " ";
+        cout << "   ";
         for (int j = 0; j < col_; j++)
         {
-            cout << "+-";
+            cout << "+---";
         }
         cout << "+" << endl;
-        cout << setw(0) << (i + 1);
+        // row number diplaying
+        cout << setw(2) << (i + 1);
         for (int j = 0; j < col_; j++)
         {
-            cout << "|" << map_[i][j];
+            cout << " | " << map_[i][j];
         }
-        cout << "|" << endl;
+        cout << " |" << endl;
     }
-    cout << " ";
+    cout << "   ";
     for (int j = 0; j < col_; j++)
     {
-        cout << "+-";
+        cout << "+---";
     }
     cout << "+" << endl;
 
@@ -468,14 +501,3 @@ void Intro::changeSettings()
     changed_ = true;
     intro.newBoard(intro, rows_, col_, zombie_, changed_);
 }
-
-
-
-
-/* 
-display intro
-display game
-
-
-
- */
