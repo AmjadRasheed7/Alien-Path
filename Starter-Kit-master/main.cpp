@@ -19,41 +19,31 @@
 #include <ctime>
 using namespace std;
 
-void run()
-{
-
+void run(){
+    
     Intro intro;
     Alien alien;
-     alien.randomAttri();
     // initialisers
-    alien.alienPos(intro);
+    alien.alienPos(intro); 
+    // alien.charAttri();
     intro.displayIntro();
-    alien.charAttri();
     // when the user change settings
-
-    if (intro.getChanged() == true)
-    {   
+    if(intro.getChanged() == true){
         pf::ClearScreen();
         intro.newBoard(intro, intro.getRows(), intro.getCol(), intro.getZombie(), intro.getChanged());
     }
-    else
-    {
-        while (true)
-        {
-            alien.move(intro);
-            pf::ClearScreen();
-
-            intro.displayGame();
-             alien.charAttri();
-            
-        }
-    }
+    else{
+    while(true){
+    alien.move(intro);
+    pf::ClearScreen();
+    intro.displayGame();
+    }}
+    
 }
 
 int main()
-{
-   
-   srand(time(NULL));
-   
+{   
+    srand(time(NULL));
     run();
+   
 }
