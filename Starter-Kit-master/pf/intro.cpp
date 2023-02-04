@@ -44,12 +44,12 @@ private:
     int life_, attack_, range_, x_, y_, zombie2_;
     char alien_; // 'A'
     string dir_; // up, down, left, right
- 
-public:
     int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
-    int random_life, random_attack, random_range,* RandAttack, * Randlife, * Randrange;
+    int random_life, random_attack, random_range;
+ 
+public:
     Alien(int life = 100, int attack = 0, int range = 0);
     void alienPos(Intro &intro);
     void move(Intro &intro);
@@ -61,32 +61,24 @@ public:
   
 };
 
+void Alien::charAttri()
+{
+    cout << "Alien   : Life " << life_ << " attack " << attack_ << endl;
+    cout << "Zombie " << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] << " range : " << zombie_range[random_range] << endl;
+}
+
+void Alien::randomAttri()
+{
+    random_life = rand() % size(zombie_life);
+    random_attack = rand() % size(zombie_attack);
+    random_range = rand() % size(zombie_range);
+}
 
 int Alien::newAlienPosX(Intro &intro){
     return x_;
 }
 int Alien::newAlienPosY(Intro &intro){
     return y_;
-}
-
-void Alien::randomAttri()
-{
-    
-  
-    // cout << random_life << endl;
-    // cout << random_attack << endl;
-    // cout << random_range << endl;
-    
-    
-}
-void Alien::charAttri()
-{
-    random_life = rand() % size(zombie_life);
-    random_attack = rand() % size(zombie_attack);
-    random_range = rand() % size(zombie_range);
-    cout << "Alien   : Life " << life_ << " attack " << attack_ << endl;
-    cout << "Zombie " << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] <<" range : " << zombie_range[random_range] <<endl;
-
 }
 
 void Alien::alienDisplay(Intro &intro, Alien &alien)
@@ -117,6 +109,7 @@ void Alien::move(Intro &intro)
         y_++;
         intro.setObject(x_, y_, alien_);
         intro.displayGame();
+        charAttri();
         pf::Pause();
         pf::ClearScreen();
         }
@@ -136,6 +129,7 @@ void Alien::move(Intro &intro)
         y_--;
         intro.setObject(x_, y_, alien_);
         intro.displayGame();
+        charAttri();
         pf::Pause();
         pf::ClearScreen();
         }
@@ -154,6 +148,7 @@ void Alien::move(Intro &intro)
         x_--;
         intro.setObject(x_, y_, alien_);
         intro.displayGame();
+        charAttri();
         pf::Pause();
         pf::ClearScreen();
         }
@@ -172,6 +167,7 @@ void Alien::move(Intro &intro)
         x_++;
         intro.setObject(x_, y_, alien_);
         intro.displayGame();
+        charAttri();
         pf::Pause();
         pf::ClearScreen();
         }
@@ -244,7 +240,7 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     while (n < 1)
     {
         mapinit(rows, col, zombie);
-
+        alien.randomAttri();
         n++;
         break;
     }
@@ -253,6 +249,7 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     {
         pf::ClearScreen();
         displayGame();
+        alien.charAttri();
         alien.move(intro);
     }
 }
@@ -375,7 +372,6 @@ void Intro::displayGame()
     }
     cout << endl
          << endl;
-    alien.charAttri();
 }
 
 void Intro::displayIntro()
