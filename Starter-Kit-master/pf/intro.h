@@ -34,6 +34,7 @@ public:
     bool isArrowDown(int x, int y);
     bool isArrowLeft(int x, int y);
     bool isArrowRight(int x, int y);
+    char getObject(int x, int y);
 };
 
 class Alien
@@ -42,6 +43,7 @@ private:
     int life_, attack_, range_, x_, y_, zombie2_;
     char alien_; // 'A'
     string dir_; // up, down, left, right
+    bool redir_;
     int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
@@ -62,4 +64,12 @@ public:
     int newAlienPosY(Intro &intro);
     void charAttri();
     void randomAttri();
+    void alienUp(Intro &intro);
+    void alienLeft(Intro &intro);
+    void alienRight(Intro &intro);
+    void alienDown(Intro &intro);
+    void moveLeft(Intro &intro);
+    void moveRight(Intro &intro);
+    void moveUp(Intro &intro);
+    void moveDown(Intro &intro);
 };
