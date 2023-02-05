@@ -36,19 +36,21 @@ public:
     bool isArrowDown(int x, int y);
     bool isArrowLeft(int x, int y);
     bool isArrowRight(int x, int y);
+    char getObject(int x, int y);
 };
 
 class Alien
 {
 private:
     int life_, attack_, range_, x_, y_, zombie2_;
+    bool redir_;
     char alien_; // 'A'
     string dir_; // up, down, left, right
     int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
     int random_life, random_attack, random_range;
- 
+
 public:
     Alien(int life = 100, int attack = 0, int range = 0);
     void alienPos(Intro &intro);
@@ -58,13 +60,249 @@ public:
     void randomAttri();
     int newAlienPosX(Intro &intro);
     int newAlienPosY(Intro &intro);
-  
+    void alienUp(Intro &intro);
+    void alienLeft(Intro &intro);
+    void alienRight(Intro &intro);
+    void alienDown(Intro &intro);
+    void moveLeft(Intro &intro);
+    void moveRight(Intro &intro);
+    void moveUp(Intro &intro);
+    void moveDown(Intro &intro);
 };
+
+void Alien::moveLeft(Intro &intro)
+{
+    while (true)
+    {
+        if (!(newAlienPosX(intro) > 1))
+        {
+            break;
+        }
+        else if (intro.isRock(x_ - 1, y_))
+        {
+            break;
+        }
+        else if (intro.getObject(x_ - 1, y_) == '>')
+        {
+            intro.setObject(x_, y_, '.');
+            x_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            pf::Pause();
+            pf::ClearScreen();
+            moveRight(intro);
+            break;
+        }
+        else if (intro.getObject(x_ - 1, y_) == '^')
+        {
+            intro.setObject(x_, y_, '.');
+            x_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            pf::Pause();
+            pf::ClearScreen();
+            moveUp(intro);
+            break;
+        }
+        else if (intro.getObject(x_ - 1, y_) == 'v')
+        {
+            intro.setObject(x_, y_, '.');
+            x_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            pf::Pause();
+            pf::ClearScreen();
+            moveDown(intro);
+            break;
+        }
+        intro.setObject(x_, y_, '.');
+        x_--;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        pf::Pause();
+        pf::ClearScreen();
+    }
+}
+void Alien::moveRight(Intro &intro)
+{
+    while (true)
+    {
+        if (!(newAlienPosX(intro) < intro.getCol()))
+        {
+            break;
+        }
+        else if (intro.isRock(x_ + 1, y_))
+        {
+            break;
+        }
+        else if (intro.getObject(x_ + 1, y_) == '^')
+        {
+            intro.setObject(x_, y_, '.');
+            x_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri();
+            pf::Pause();
+            pf::ClearScreen();
+            moveUp(intro);
+            break;
+        }
+        else if (intro.getObject(x_ + 1, y_) == 'v')
+        {
+            intro.setObject(x_, y_, '.');
+            x_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri();
+            pf::Pause();
+            pf::ClearScreen();
+            moveDown(intro);
+            break;
+        }
+        else if (intro.getObject(x_ + 1, y_) == '<')
+        {
+            intro.setObject(x_, y_, '.');
+            x_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri();
+            pf::Pause();
+            pf::ClearScreen();
+            moveLeft(intro);
+            break;
+        }
+        intro.setObject(x_, y_, '.');
+        x_++;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        charAttri();
+        pf::Pause();
+        pf::ClearScreen();
+    }
+}
+void Alien::moveUp(Intro &intro)
+{
+    while (true)
+    {
+        if (!(newAlienPosY(intro) < intro.getRows()))
+        {
+            break;
+        }
+        else if (intro.isRock(x_, y_ + 1))
+        {
+            break;
+        }
+        else if (intro.getObject(x_, y_ + 1) == 'v')
+        {
+            intro.setObject(x_, y_, '.');
+            y_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri();
+            pf::Pause();
+            pf::ClearScreen();
+            moveDown(intro);
+            break;
+        }
+        else if (intro.getObject(x_, y_ + 1) == '<')
+        {
+            intro.setObject(x_, y_, '.');
+            y_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri();
+            pf::Pause();
+            pf::ClearScreen();
+            moveLeft(intro);
+            break;
+        }
+        else if (intro.getObject(x_, y_ + 1) == '>')
+        {
+            intro.setObject(x_, y_, '.');
+            y_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri();
+            pf::Pause();
+            pf::ClearScreen();
+            moveRight(intro);
+            break;
+        }
+
+        intro.setObject(x_, y_, '.');
+        y_++;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        charAttri();
+        pf::Pause();
+        pf::ClearScreen();
+    }
+}
+void Alien::moveDown(Intro &intro)
+{
+    while (true)
+    {
+        if (!(newAlienPosY(intro) > 1))
+        {
+            break;
+        }
+        else if (intro.isRock(x_, y_ - 1))
+        {
+            break;
+        }
+        else if (intro.getObject(x_, y_ - 1) == '>')
+        {
+
+            intro.setObject(x_, y_, '.');
+            y_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri();
+            pf::Pause();
+            pf::ClearScreen();
+            moveRight(intro);
+            break;
+        }
+        else if (intro.getObject(x_, y_ - 1) == '<')
+        {
+            intro.setObject(x_, y_, '.');
+            y_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri();
+            pf::Pause();
+            pf::ClearScreen();
+            moveLeft(intro);
+            break;
+        }
+        else if (intro.getObject(x_, y_ - 1) == '^')
+        {
+            intro.setObject(x_, y_, '.');
+            y_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri();
+            pf::Pause();
+            pf::ClearScreen();
+            moveUp(intro);
+            break;
+        }
+
+        intro.setObject(x_, y_, '.');
+        y_--;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        charAttri();
+        pf::Pause();
+        pf::ClearScreen();
+    }
+}
 
 void Alien::charAttri()
 {
     cout << "Alien   : Life " << life_ << " attack " << attack_ << endl;
-    cout << "Zombie " << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] << " range : " << zombie_range[random_range] << endl;
+    cout << "Zombie "
+         << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] << " range : " << zombie_range[random_range] << endl;
 }
 
 void Alien::randomAttri()
@@ -74,10 +312,12 @@ void Alien::randomAttri()
     random_range = rand() % size(zombie_range);
 }
 
-int Alien::newAlienPosX(Intro &intro){
+int Alien::newAlienPosX(Intro &intro)
+{
     return x_;
 }
-int Alien::newAlienPosY(Intro &intro){
+int Alien::newAlienPosY(Intro &intro)
+{
     return y_;
 }
 
@@ -86,12 +326,30 @@ void Alien::alienDisplay(Intro &intro, Alien &alien)
     intro.displayGame();
 }
 
+void Alien::alienUp(Intro &intro)
+{
+    moveUp(intro);
+}
+void Alien::alienLeft(Intro &intro)
+{
+    moveLeft(intro);
+}
+void Alien::alienRight(Intro &intro)
+{
+    moveRight(intro);
+}
+void Alien::alienDown(Intro &intro)
+{
+    moveDown(intro);
+}
+
 // when alien reaches boundary, when alien hits rock object, when he attack a zombie but the zombie lives the attack.
 
 void Alien::move(Intro &intro)
 {
 
     char empty = ' ';
+    int n = 0; // for switches
     dir_ = ' ';
     dir_.clear();
     cout << "command> ";
@@ -100,99 +358,30 @@ void Alien::move(Intro &intro)
     pf::ClearScreen();
     if (dir_ == "up")
     {
-        while(true)
-        if(newAlienPosY(intro) < intro.getRows()|| newAlienPosY(intro) < intro.getRows()){
-            if(intro.isRock(x_ , y_ +1)){
-                break;
-            }
-        intro.setObject(x_, y_, '.');
-        y_++;
-        intro.setObject(x_, y_, alien_);
-        intro.displayGame();
-        charAttri();
-        pf::Pause();
-        pf::ClearScreen();
-        }
-        else{
-            break;
-        }
+
+        alienUp(intro);
     }
 
-    if (dir_ == "down")
+    else if (dir_ == "down")
     {
-         while(true)
-        if(newAlienPosY(intro) > 1|| newAlienPosY(intro) > 1){
-            if(intro.isRock(x_, y_ - 1)){
-                break;
-            }
-        intro.setObject(x_, y_, '.');
-        y_--;
-        intro.setObject(x_, y_, alien_);
-        intro.displayGame();
-        charAttri();
-        pf::Pause();
-        pf::ClearScreen();
-        }
-        else{
-            break;
-        }
+        n = 2;
+        alienDown(intro);
     }
     else if (dir_ == "left")
     {
-        while(true)
-        if(newAlienPosX(intro) > 1 || newAlienPosX(intro) > 1){
-            if(intro.isRock(x_ -1, y_)){
-                break;
-            }
-        intro.setObject(x_, y_, '.');
-        x_--;
-        intro.setObject(x_, y_, alien_);
-        intro.displayGame();
-        charAttri();
-        pf::Pause();
-        pf::ClearScreen();
-        }
-        else{
-            break;
-        }
+        n = 3;
+        alienLeft(intro);
     }
     else if (dir_ == "right")
     {
-        while(true)
-        if(newAlienPosX(intro) < intro.getCol() || newAlienPosX(intro) < intro.getCol()){
-            if(intro.isRock(x_ + 1, y_)){
-                break;
-            }
-        intro.setObject(x_, y_, '.');
-        x_++;
-        intro.setObject(x_, y_, alien_);
-        intro.displayGame();
-        charAttri();
-        pf::Pause();
-        pf::ClearScreen();
-        }
-        else{
-            break;
-        }
+        n = 4;
+        alienRight(intro);
     }
-    // intro.setObject(x_, y_, alien_);
-    // if(dir_ == "up"){
-    //     intro.setObject(x_, y_ - 1, empty);
-    // }
-    // else if(dir_ == "down"){
-    //     intro.setObject(x_, y_ + 1, empty);
-    // }
-    // else if(dir_ == "left"){
-    //     intro.setObject(x_ + 1, y_, empty);
-    // }
-    // else if(dir_ == "right"){
-    //     intro.setObject(x_ - 1, y_, empty);
-    // }
-    // intro.setObject(x_, y_, alien_);
 }
 
 Alien::Alien(int life, int attack, int range)
-{   life_ = life;
+{
+    life_ = life;
     attack_ = attack;
     range_ = range;
 }
@@ -206,7 +395,13 @@ void Alien::alienPos(Intro &intro)
     intro.setObject(x_, y_, alien_);
 }
 
-bool Intro::isZombie(int x, int y){
+char Intro::getObject(int x, int y)
+{
+    return map_[rows_ - y][x - 1];
+}
+
+bool Intro::isZombie(int x, int y)
+{
     return map_[rows_ - y][x - 1] == '1';
     return map_[rows_ - y][x - 1] == '2';
     return map_[rows_ - y][x - 1] == '3';
@@ -218,17 +413,105 @@ bool Intro::isZombie(int x, int y){
     return map_[rows_ - y][x - 1] == '9';
 }
 
-bool Intro::isArrowUp(int x, int y){
-     return map_[rows_ - y][x - 1] == '^';
+bool Intro::isArrowUp(int x, int y)
+{
+    char ch;
+    ch = map_[rows_ - y][x - 1];
+    if (ch == '^')
+    {
+        return true;
+    }
+    else if (ch == 'v')
+    {
+        return true;
+    }
+    else if (ch == '>')
+    {
+        return true;
+    }
+    else if (ch == '<')
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
-bool Intro::isArrowRight(int x, int y){
-     return map_[rows_ - y][x - 1] == '>';
+bool Intro::isArrowRight(int x, int y)
+{
+    char ch;
+    ch = map_[rows_ - y][x - 1];
+    if (ch == '^')
+    {
+        return true;
+    }
+    else if (ch == 'v')
+    {
+        return true;
+    }
+    else if (ch == '>')
+    {
+        return true;
+    }
+    else if (ch == '<')
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
-bool Intro::isArrowLeft(int x, int y){
-     return map_[rows_ - y][x - 1] == '<';
+bool Intro::isArrowLeft(int x, int y)
+{
+    char ch;
+    ch = map_[rows_ - y][x - 1];
+    if (ch == '^')
+    {
+        return true;
+    }
+    else if (ch == 'v')
+    {
+        return true;
+    }
+    else if (ch == '>')
+    {
+        return true;
+    }
+    else if (ch == '<')
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
-bool Intro::isArrowDown(int x, int y){
-     return map_[rows_ - y][x - 1] == 'v';
+bool Intro::isArrowDown(int x, int y)
+{
+    char ch;
+    ch = map_[rows_ - y][x - 1];
+    if (ch == '^')
+    {
+        return true;
+    }
+    else if (ch == 'v')
+    {
+        return true;
+    }
+    else if (ch == '>')
+    {
+        return true;
+    }
+    else if (ch == '<')
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
@@ -254,15 +537,15 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     }
 }
 
-bool Intro::isRock(int x, int y){
-    return map_[rows_ - y][x-1] == 'r'; 
-    }
+bool Intro::isRock(int x, int y)
+{
+    return map_[rows_ - y][x - 1] == 'r';
+}
 
 bool Intro::getChanged() const
 {
     return changed_;
 }
-
 
 int Intro::getZombie() const
 {
@@ -472,7 +755,7 @@ void Intro::changeSettings()
     {
         cout << "Invalid input. Please enter an odd integer value => ";
         cin.clear();
-        cin.ignore(INT_MAX, '\n'); // to clear input buffer 
+        cin.ignore(INT_MAX, '\n'); // to clear input buffer
     }
 
     cout << "Enter columns => ";
