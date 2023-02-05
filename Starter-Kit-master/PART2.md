@@ -10,9 +10,11 @@ Please provide the YouTube link to your [Video Demo](https://youtube.com).
 
 List all the features completed.
 
-1. Cool Feature #1
-2. Cool Feature #2
-3. *add more*
+1. Modified alien movements.
+2. Alien now stops after countering a rock or a border before it.
+3. Updated the map.
+4. Fixed the zombie life, attack and range array.
+5. Arrows now redirect alien movements accordingly.
 
 ### To Do
 
