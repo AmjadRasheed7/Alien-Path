@@ -15,6 +15,7 @@ List all the features completed.
 3. Updated the map.
 4. Fixed the zombie life, attack and range array.
 5. Arrows now redirect alien movements accordingly.
+6. Trails are now removed when the alien movement is stopped and replaced by randomly generated objects.
 
 ### To Do
 
