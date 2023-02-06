@@ -32,11 +32,8 @@ public:
     bool getChanged() const;
     bool isRock(int x, int y);
     bool isZombie(int x, int y);
-    bool isArrowUp(int x, int y);
-    bool isArrowDown(int x, int y);
-    bool isArrowLeft(int x, int y);
-    bool isArrowRight(int x, int y);
     char getObject(int x, int y);
+    void removeTrail();
 };
 
 class Alien
@@ -50,6 +47,7 @@ private:
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
     int random_life, random_attack, random_range;
+    int moveCount = 0;
 
 public:
     Alien(int life = 100, int attack = 0, int range = 0);
@@ -68,6 +66,7 @@ public:
     void moveRight(Intro &intro);
     void moveUp(Intro &intro);
     void moveDown(Intro &intro);
+    void changeArrow(Intro &intro);
 };
 
 void Alien::moveLeft(Intro &intro)
@@ -123,6 +122,8 @@ void Alien::moveLeft(Intro &intro)
         pf::ClearScreen();
     }
 }
+
+
 void Alien::moveRight(Intro &intro)
 {
     while (true)
@@ -349,7 +350,6 @@ void Alien::move(Intro &intro)
 {
 
     char empty = ' ';
-    int n = 0; // for switches
     dir_ = ' ';
     dir_.clear();
     cout << "command> ";
@@ -358,25 +358,45 @@ void Alien::move(Intro &intro)
     pf::ClearScreen();
     if (dir_ == "up")
     {
-
+        dir_.clear();
         alienUp(intro);
+        intro.removeTrail();
     }
 
     else if (dir_ == "down")
     {
-        n = 2;
+        dir_.clear();
         alienDown(intro);
+        intro.removeTrail();
     }
     else if (dir_ == "left")
     {
-        n = 3;
+        dir_.clear();
         alienLeft(intro);
+        intro.removeTrail();
     }
     else if (dir_ == "right")
     {
-        n = 4;
+        dir_.clear();
         alienRight(intro);
+        intro.removeTrail();
     }
+    else if(dir_ == "arrow"){
+        dir_.clear();
+        changeArrow(intro);
+        pf::Pause();
+
+    }
+}
+
+void Alien::changeArrow(Intro &intro){
+    int row;
+    int col;
+    intro.displayGame();
+    cout << "Enter row =>"; cin >> row; cout << endl;
+    cout << "Enter column =>"; cin >> col; cout << endl;
+    cout << "Enter direction =>"; cin >> dir_; cout << endl;
+    intro.getObject(col, intro.getRows() - row + 1); // to find coordinates of the given values.
 }
 
 Alien::Alien(int life, int attack, int range)
@@ -400,6 +420,7 @@ char Intro::getObject(int x, int y)
     return map_[rows_ - y][x - 1];
 }
 
+// this function requires modificiation, it doesn't work.
 bool Intro::isZombie(int x, int y)
 {
     return map_[rows_ - y][x - 1] == '1';
@@ -411,107 +432,6 @@ bool Intro::isZombie(int x, int y)
     return map_[rows_ - y][x - 1] == '7';
     return map_[rows_ - y][x - 1] == '8';
     return map_[rows_ - y][x - 1] == '9';
-}
-
-bool Intro::isArrowUp(int x, int y)
-{
-    char ch;
-    ch = map_[rows_ - y][x - 1];
-    if (ch == '^')
-    {
-        return true;
-    }
-    else if (ch == 'v')
-    {
-        return true;
-    }
-    else if (ch == '>')
-    {
-        return true;
-    }
-    else if (ch == '<')
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-bool Intro::isArrowRight(int x, int y)
-{
-    char ch;
-    ch = map_[rows_ - y][x - 1];
-    if (ch == '^')
-    {
-        return true;
-    }
-    else if (ch == 'v')
-    {
-        return true;
-    }
-    else if (ch == '>')
-    {
-        return true;
-    }
-    else if (ch == '<')
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-bool Intro::isArrowLeft(int x, int y)
-{
-    char ch;
-    ch = map_[rows_ - y][x - 1];
-    if (ch == '^')
-    {
-        return true;
-    }
-    else if (ch == 'v')
-    {
-        return true;
-    }
-    else if (ch == '>')
-    {
-        return true;
-    }
-    else if (ch == '<')
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-bool Intro::isArrowDown(int x, int y)
-{
-    char ch;
-    ch = map_[rows_ - y][x - 1];
-    if (ch == '^')
-    {
-        return true;
-    }
-    else if (ch == 'v')
-    {
-        return true;
-    }
-    else if (ch == '>')
-    {
-        return true;
-    }
-    else if (ch == '<')
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
 }
 
 void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
@@ -557,6 +477,21 @@ int Intro::getCol() const
     return col_;
 }
 
+void Intro::removeTrail(){
+    Alien alien;
+    char objects[] = {' ', ' ', ' ', ' ', 'p', 'h', 'h', 'r', '^', '<', '>', 'v'};
+    int noObjects = size(objects);
+
+    for(int i = 0; i < rows_; i++){
+        for(int j = 0; j < col_; j++){
+            int noObj = rand() % noObjects;
+            if(map_[i][j] == '.'){
+                setObject(j + 1, rows_ - i, objects[noObj]);
+            }
+        }
+    }
+}
+
 int Intro::getRows() const
 {
     return rows_;
@@ -572,7 +507,7 @@ void Intro::mapinit(int rows, int col, int zombie)
     rows_ = rows;
     col_ = col;
 
-    char objects[] = {' ', ' ', ' ', ' ', ' ', ' ', 'p', 'h', 'h', 'r', '2', '^', '<', '>', 'v', 'r'};
+    char objects[] = {' ', ' ', ' ', ' ', 'p', 'h', 'h', 'r', '^', '<', '>', 'v'};
     int noObjects = size(objects);
     // dynamic 2D array
     map_.resize(rows_); // create empty rows
@@ -632,26 +567,26 @@ void Intro::displayGame()
     }
     cout << "+" << endl;
 
-    cout << " ";
+    cout << "             ";
     // column numbering displays
     for (int j = 0; j < col_; j++)
     {
         int n = (j + 1) / 10;
-        cout << " ";
+        cout << " "; // between
         if (n == 0)
         {
-            cout << " ";
+            cout << setw(3);
         }
         else
         {
-            cout << n;
+            cout << n << "  ";
         }
     }
     cout << endl;
-    cout << " ";
+    cout << "    ";
     for (int j = 0; j < col_; j++)
     {
-        cout << " " << (j + 1) % 10;
+        cout << " " << (j + 1) % 10 << "  ";
     }
     cout << endl
          << endl;
