@@ -30,10 +30,6 @@ public:
     bool getChanged() const;
     bool isRock(int x, int y);
     bool isZombie(int x, int y);
-    bool isArrowUp(int x, int y);
-    bool isArrowDown(int x, int y);
-    bool isArrowLeft(int x, int y);
-    bool isArrowRight(int x, int y);
     char getObject(int x, int y);
 };
 
@@ -72,4 +68,5 @@ public:
     void moveRight(Intro &intro);
     void moveUp(Intro &intro);
     void moveDown(Intro &intro);
+    void changeArrow(Intro &intro);
 };
