@@ -31,15 +31,20 @@ public:
     bool isRock(int x, int y);
     bool isZombie(int x, int y);
     char getObject(int x, int y);
+    void removeTrail();
+    bool isArrow(int x, int y);
+    bool isHealth(int x, int y);
+    bool isPod(int x, int y);
+    
 };
 
 class Alien
 {
 private:
     int life_, attack_, range_, x_, y_, zombie2_;
+    bool redir_;
     char alien_; // 'A'
     string dir_; // up, down, left, right
-    bool redir_;
     int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
@@ -51,15 +56,10 @@ public:
     void alienPos(Intro &intro);
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
-    int getZombieLife();
-    int getZombieRange();
-    int getZombieAttack();
-    int getLife();
-    int getAttack();
-    int newAlienPosX(Intro &into);
-    int newAlienPosY(Intro &intro);
-    void charAttri();
+    void charAttri(Intro &intro);
     void randomAttri();
+    int newAlienPosX(Intro &intro);
+    int newAlienPosY(Intro &intro);
     void alienUp(Intro &intro);
     void alienLeft(Intro &intro);
     void alienRight(Intro &intro);
