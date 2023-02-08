@@ -16,6 +16,9 @@ List all the features completed.
 4. Fixed the zombie life, attack and range array.
 5. Arrows now redirect alien movements accordingly.
 6. Trails are now removed when the alien movement is stopped and replaced by randomly generated objects.
+7. The player can now change the directions of the arrow in the map.
+8. Zombies are now pushed in the map according to their numbers.
+9. All zombies have different attributes.
 
 ### To Do
 
