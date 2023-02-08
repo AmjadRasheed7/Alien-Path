@@ -32,66 +32,517 @@ public:
     bool getChanged() const;
     bool isRock(int x, int y);
     bool isZombie(int x, int y);
-    bool isArrowUp(int x, int y);
-    bool isArrowDown(int x, int y);
-    bool isArrowLeft(int x, int y);
-    bool isArrowRight(int x, int y);
+    char getObject(int x, int y);
+    void removeTrail();
+    bool isArrow(int x, int y);
+    bool isHealth(int x, int y);
+    bool isPod(int x, int y);
 };
 
 class Alien
 {
 private:
     int life_, attack_, range_, x_, y_, zombie2_;
+    bool redir_;
     char alien_; // 'A'
     string dir_; // up, down, left, right
- 
-public:
     int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
-    int random_life, random_attack, random_range,* RandAttack, * Randlife, * Randrange;
+    int random_life, random_attack, random_range, count_ = 0;
+
+public:
     Alien(int life = 100, int attack = 0, int range = 0);
     void alienPos(Intro &intro);
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
-    void charAttri();
+    void charAttri(Intro &intro);
     void randomAttri();
     int newAlienPosX(Intro &intro);
     int newAlienPosY(Intro &intro);
-  
+    void alienUp(Intro &intro);
+    void alienLeft(Intro &intro);
+    void alienRight(Intro &intro);
+    void alienDown(Intro &intro);
+    void moveLeft(Intro &intro);
+    void moveRight(Intro &intro);
+    void moveUp(Intro &intro);
+    void moveDown(Intro &intro);
+    void changeArrow(Intro &intro);
+    void zombiePos(Intro &intro);
 };
 
-
-int Alien::newAlienPosX(Intro &intro){
-    return x_;
+void Alien::zombiePos(Intro &intro)
+{
+    srand(time(NULL));
+    for (int i = 0; i < intro.getZombie(); i++)
+    {
+        char tempZombie = '1' + i;
+        y_ = rand() % intro.getRows() + 1;
+        x_ = rand() % intro.getCol() + 1;
+        while (intro.getObject(x_, y_) != ' ')
+        {
+            y_ = rand() % intro.getRows() + 1;
+            x_ = rand() % intro.getCol() + 1;
+        }
+        intro.setObject(x_, y_, tempZombie);
+    }
 }
-int Alien::newAlienPosY(Intro &intro){
-    return y_;
+
+void Alien::moveLeft(Intro &intro)
+{
+    while (true)
+    {
+        if (!(newAlienPosX(intro) > 1))
+        {
+            intro.displayGame();
+            cout << "Alien hits the border." << endl;
+            attack_ = 0;
+            pf::Pause();
+            pf::ClearScreen();
+            break;
+        }
+        else if (intro.isHealth(x_ - 1, y_))
+        {
+            life_ = life_ + 20;
+            if (life_ > 100)
+            {
+                life_ = 100;
+            }
+            intro.displayGame();
+            cout << "Alien picks up a health pack" << endl;
+            cout << "Alien life increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+        }
+        else if (intro.isRock(x_ - 1, y_))
+        {
+            intro.displayGame();
+            cout << "Alien stumbles upon a rock." << endl;
+            attack_ = 0;
+            pf::Pause();
+            pf::ClearScreen();
+            break;
+        }
+        else if (intro.isPod(x_ - 1, y_))
+        {
+            // REDUCE ZOMBIE HEALTH.
+        }
+        else if (intro.getObject(x_ - 1, y_) == '>')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            x_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveRight(intro);
+            break;
+        }
+        else if (intro.getObject(x_ - 1, y_) == '<')
+        {
+            attack_ = attack_ + 20;
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+        }
+        else if (intro.getObject(x_ - 1, y_) == '^')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            x_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveUp(intro);
+            break;
+        }
+        else if (intro.getObject(x_ - 1, y_) == 'v')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            x_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveDown(intro);
+            break;
+        }
+        intro.setObject(x_, y_, '.');
+        x_--;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        charAttri(intro);
+        pf::Pause();
+        pf::ClearScreen();
+    }
+}
+
+void Alien::moveRight(Intro &intro)
+{
+    while (true)
+    {
+        if (!(newAlienPosX(intro) < intro.getCol()))
+        {
+            intro.displayGame();
+            cout << "Alien hits the border." << endl;
+            attack_ = 0;
+            pf::Pause();
+            pf::ClearScreen();
+            break;
+        }
+        else if (intro.isRock(x_ + 1, y_))
+        {
+            intro.displayGame();
+            cout << "Alien stumbles upon a rock." << endl;
+            attack_ = 0;
+            pf::Pause();
+            pf::ClearScreen();
+            break;
+        }
+        else if (intro.isHealth(x_ + 1, y_))
+        {
+            life_ = life_ + 20;
+            if (life_ > 100)
+            {
+                life_ = 100;
+            }
+            intro.displayGame();
+            cout << "Alien picks up a health pack" << endl;
+            cout << "Alien life increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+        }
+        else if (intro.isPod(x_ + 1, y_))
+        {
+            // REDUCE ZOMBIE HEALTH.
+        }
+        else if (intro.getObject(x_ + 1, y_) == '^')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            x_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveUp(intro);
+            break;
+        }
+        else if (intro.getObject(x_ + 1, y_) == '>')
+        {
+            attack_ = attack_ + 20;
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+        }
+        else if (intro.getObject(x_ + 1, y_) == 'v')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            x_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveDown(intro);
+            break;
+        }
+        else if (intro.getObject(x_ + 1, y_) == '<')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            x_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveLeft(intro);
+            break;
+        }
+        intro.setObject(x_, y_, '.');
+        x_++;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        charAttri(intro);
+        pf::Pause();
+        pf::ClearScreen();
+    }
+}
+void Alien::moveUp(Intro &intro)
+{
+    while (true)
+    {
+        if (!(newAlienPosY(intro) < intro.getRows()))
+        {
+            intro.displayGame();
+            cout << "Alien hits the border." << endl;
+            attack_ = 0;
+            pf::Pause();
+            pf::ClearScreen();
+            break;
+        }
+        else if (intro.isRock(x_, y_ + 1))
+        {
+            intro.displayGame();
+            cout << "Alien stumbles upon a rock." << endl;
+            attack_ = 0;
+            pf::Pause();
+            pf::ClearScreen();
+            break;
+        }
+        else if (intro.isPod(x_, y_ + 1))
+        {
+            // REDUCE ZOMBIE HEALTH.
+        }
+        else if (intro.isHealth(x_, y_ + 1))
+        {
+            life_ = life_ + 20;
+            if (life_ > 100)
+            {
+                life_ = 100;
+            }
+            intro.displayGame();
+            cout << "Alien picks up a health pack" << endl;
+            cout << "Alien life increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+        }
+        else if (intro.getObject(x_, y_ + 1) == 'v')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            y_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveDown(intro);
+            break;
+        }
+        else if (intro.getObject(x_, y_ + 1) == '^')
+        {
+            attack_ = attack_ + 20;
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+        }
+        else if (intro.getObject(x_, y_ + 1) == '<')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            y_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveLeft(intro);
+            break;
+        }
+        else if (intro.getObject(x_, y_ + 1) == '>')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            y_++;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveRight(intro);
+            break;
+        }
+
+        intro.setObject(x_, y_, '.');
+        y_++;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        charAttri(intro);
+        pf::Pause();
+        pf::ClearScreen();
+    }
+}
+void Alien::moveDown(Intro &intro)
+{
+    while (true)
+    {
+        if (!(newAlienPosY(intro) > 1))
+        {
+            intro.displayGame();
+            cout << "Alien hits the border." << endl;
+            attack_ = 0;
+            pf::Pause();
+            pf::ClearScreen();
+            break;
+        }
+        else if (intro.isRock(x_, y_ - 1))
+        {
+            intro.displayGame();
+            cout << "Alien stumbles upon a rock." << endl;
+            attack_ = 0;
+            pf::Pause();
+            pf::ClearScreen();
+            break;
+        }
+        else if (intro.isPod(x_, y_ - 1))
+        {
+            // REDUCE ZOMBIE HEALTH.
+        }
+        else if (intro.isHealth(x_, y_ - 1))
+        {
+            life_ = life_ + 20;
+            if (life_ > 100)
+            {
+                life_ = 100;
+            }
+            intro.displayGame();
+            cout << "Alien picks up a health pack" << endl;
+            cout << "Alien life increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+        }
+        else if (intro.getObject(x_, y_ - 1) == '>')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            y_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveRight(intro);
+            break;
+        }
+        else if (intro.getObject(x_, y_ - 1) == 'v')
+        {
+            attack_ = attack_ + 20;
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+        }
+        else if (intro.getObject(x_, y_ - 1) == '<')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            y_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveLeft(intro);
+            break;
+        }
+        else if (intro.getObject(x_, y_ - 1) == '^')
+        {
+            attack_ = attack_ + 20;
+            intro.setObject(x_, y_, '.');
+            y_--;
+            intro.setObject(x_, y_, alien_);
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Alien picks up an arrow, and attack increased by 20." << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            moveUp(intro);
+            break;
+        }
+
+        intro.setObject(x_, y_, '.');
+        y_--;
+        intro.setObject(x_, y_, alien_);
+        intro.displayGame();
+        charAttri(intro);
+        pf::Pause();
+        pf::ClearScreen();
+    }
+}
+
+void Alien::charAttri(Intro &intro)
+{
+
+    cout << "Alien   : Life " << life_ << " attack " << attack_ << endl;
+    for (int i = 0; i < intro.getZombie(); i++)
+    {
+        cout << "Zombie "
+             << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] << " range : " << zombie_range[random_range] << endl;
+        if(count_ < intro.getZombie() - 1){
+        random_life = rand() % size(zombie_life);
+        random_attack = rand() % size(zombie_attack);
+        random_range = rand() % size(zombie_range);
+        count_++;
+
+        }
+    }
 }
 
 void Alien::randomAttri()
 {
-    
-  
-    // cout << random_life << endl;
-    // cout << random_attack << endl;
-    // cout << random_range << endl;
-    
-    
+    // random_life = rand() % size(zombie_life);
+    // random_attack = rand() % size(zombie_attack);
+    // random_range = rand() % size(zombie_range);
 }
-void Alien::charAttri()
-{
-    random_life = rand() % size(zombie_life);
-    random_attack = rand() % size(zombie_attack);
-    random_range = rand() % size(zombie_range);
-    cout << "Alien   : Life " << life_ << " attack " << attack_ << endl;
-    cout << "Zombie " << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] <<" range : " << zombie_range[random_range] <<endl;
 
+int Alien::newAlienPosX(Intro &intro)
+{
+    return x_;
+}
+int Alien::newAlienPosY(Intro &intro)
+{
+    return y_;
 }
 
 void Alien::alienDisplay(Intro &intro, Alien &alien)
 {
     intro.displayGame();
+}
+
+void Alien::alienUp(Intro &intro)
+{
+    moveUp(intro);
+}
+void Alien::alienLeft(Intro &intro)
+{
+    moveLeft(intro);
+}
+void Alien::alienRight(Intro &intro)
+{
+    moveRight(intro);
+}
+void Alien::alienDown(Intro &intro)
+{
+    moveDown(intro);
 }
 
 // when alien reaches boundary, when alien hits rock object, when he attack a zombie but the zombie lives the attack.
@@ -108,95 +559,83 @@ void Alien::move(Intro &intro)
     pf::ClearScreen();
     if (dir_ == "up")
     {
-        while(true)
-        if(newAlienPosY(intro) < intro.getRows()|| newAlienPosY(intro) < intro.getRows()){
-            if(intro.isRock(x_ , y_ +1)){
-                break;
-            }
-        intro.setObject(x_, y_, '.');
-        y_++;
-        intro.setObject(x_, y_, alien_);
-        intro.displayGame();
-        pf::Pause();
-        pf::ClearScreen();
-        }
-        else{
-            break;
-        }
+        dir_.clear();
+        alienUp(intro);
+        intro.removeTrail();
     }
 
-    if (dir_ == "down")
+    else if (dir_ == "down")
     {
-         while(true)
-        if(newAlienPosY(intro) > 1|| newAlienPosY(intro) > 1){
-            if(intro.isRock(x_, y_ - 1)){
-                break;
-            }
-        intro.setObject(x_, y_, '.');
-        y_--;
-        intro.setObject(x_, y_, alien_);
-        intro.displayGame();
-        pf::Pause();
-        pf::ClearScreen();
-        }
-        else{
-            break;
-        }
+        dir_.clear();
+        alienDown(intro);
+        intro.removeTrail();
     }
     else if (dir_ == "left")
     {
-        while(true)
-        if(newAlienPosX(intro) > 1 || newAlienPosX(intro) > 1){
-            if(intro.isRock(x_ -1, y_)){
-                break;
-            }
-        intro.setObject(x_, y_, '.');
-        x_--;
-        intro.setObject(x_, y_, alien_);
-        intro.displayGame();
-        pf::Pause();
-        pf::ClearScreen();
-        }
-        else{
-            break;
-        }
+        dir_.clear();
+        alienLeft(intro);
+        intro.removeTrail();
     }
     else if (dir_ == "right")
     {
-        while(true)
-        if(newAlienPosX(intro) < intro.getCol() || newAlienPosX(intro) < intro.getCol()){
-            if(intro.isRock(x_ + 1, y_)){
-                break;
-            }
-        intro.setObject(x_, y_, '.');
-        x_++;
-        intro.setObject(x_, y_, alien_);
-        intro.displayGame();
-        pf::Pause();
-        pf::ClearScreen();
-        }
-        else{
-            break;
-        }
+        dir_.clear();
+        alienRight(intro);
+        intro.removeTrail();
     }
-    // intro.setObject(x_, y_, alien_);
-    // if(dir_ == "up"){
-    //     intro.setObject(x_, y_ - 1, empty);
-    // }
-    // else if(dir_ == "down"){
-    //     intro.setObject(x_, y_ + 1, empty);
-    // }
-    // else if(dir_ == "left"){
-    //     intro.setObject(x_ + 1, y_, empty);
-    // }
-    // else if(dir_ == "right"){
-    //     intro.setObject(x_ - 1, y_, empty);
-    // }
-    // intro.setObject(x_, y_, alien_);
+    else if (dir_ == "arrow")
+    {
+        dir_.clear();
+        changeArrow(intro);
+        pf::Pause();
+    }
+}
+
+void Alien::changeArrow(Intro &intro)
+{
+    char object;
+    int row;
+    int col;
+    intro.displayGame();
+    cout << "Enter row => ";
+    cin >> row;
+    cout << endl;
+    cout << "Enter column => ";
+    cin >> col;
+    cout << endl;
+    cout << "Enter direction => ";
+    cin >> dir_;
+    cout << endl;
+    // to find coordinates of the given values.
+    object = intro.getObject(col, intro.getRows() - row + 1);
+    if (dir_ == "left" && intro.isArrow(col, intro.getRows() - row + 1))
+    {
+        intro.setObject(col, intro.getRows() - row + 1, '<');
+        cout << "Arrow " << object << " is now switched to <" << endl;
+    }
+    else if (dir_ == "right" && intro.isArrow(col, intro.getRows() - row + 1))
+    {
+        intro.setObject(col, intro.getRows() - row + 1, '>');
+        cout << "Arrow " << object << " is now switched to >" << endl;
+    }
+    else if (dir_ == "up" && intro.isArrow(col, intro.getRows() - row + 1))
+    {
+        intro.setObject(col, intro.getRows() - row + 1, '^');
+        cout << "Arrow " << object << " is now switched to ^" << endl;
+    }
+    else if (dir_ == "down" && intro.isArrow(col, intro.getRows() - row + 1))
+    {
+        intro.setObject(col, intro.getRows() - row + 1, 'v');
+        cout << "Arrow " << object << " is now switched to v" << endl;
+    }
+    else
+    {
+        cout << "There are no arrows in that area." << endl;
+    }
 }
 
 Alien::Alien(int life, int attack, int range)
-{   life_ = life;
+{
+    life_ = life;
     attack_ = attack;
     range_ = range;
 }
@@ -206,33 +645,18 @@ void Alien::alienPos(Intro &intro)
     alien_ = {'A'};
     y_ = (intro.getRows() + 1) / 2;
     x_ = (intro.getCol() + 1) / 2;
-    zombie2_ = intro.getZombie();
     intro.setObject(x_, y_, alien_);
 }
 
-bool Intro::isZombie(int x, int y){
-    return map_[rows_ - y][x - 1] == '1';
-    return map_[rows_ - y][x - 1] == '2';
-    return map_[rows_ - y][x - 1] == '3';
-    return map_[rows_ - y][x - 1] == '4';
-    return map_[rows_ - y][x - 1] == '5';
-    return map_[rows_ - y][x - 1] == '6';
-    return map_[rows_ - y][x - 1] == '7';
-    return map_[rows_ - y][x - 1] == '8';
-    return map_[rows_ - y][x - 1] == '9';
+char Intro::getObject(int x, int y)
+{
+    return map_[rows_ - y][x - 1];
 }
 
-bool Intro::isArrowUp(int x, int y){
-     return map_[rows_ - y][x - 1] == '^';
-}
-bool Intro::isArrowRight(int x, int y){
-     return map_[rows_ - y][x - 1] == '>';
-}
-bool Intro::isArrowLeft(int x, int y){
-     return map_[rows_ - y][x - 1] == '<';
-}
-bool Intro::isArrowDown(int x, int y){
-     return map_[rows_ - y][x - 1] == 'v';
+// this function requires modificiation, it doesn't work.
+bool Intro::isZombie(int x, int y)
+{
+    return true;
 }
 
 void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
@@ -244,28 +668,64 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     while (n < 1)
     {
         mapinit(rows, col, zombie);
-
+        alien.randomAttri();
         n++;
         break;
     }
+    alien.zombiePos(intro);
     alien.alienPos(intro);
     while (true)
     {
         pf::ClearScreen();
         displayGame();
+        alien.charAttri(intro);
         alien.move(intro);
     }
 }
 
-bool Intro::isRock(int x, int y){
-    return map_[rows_ - y][x-1] == 'r'; 
+bool Intro::isHealth(int x, int y)
+{
+    return map_[rows_ - y][x - 1] == 'h';
+}
+
+bool Intro::isArrow(int x, int y)
+{
+    if (map_[rows_ - y][x - 1] == '>')
+    {
+        return true;
     }
+    else if (map_[rows_ - y][x - 1] == '<')
+    {
+        return true;
+    }
+    else if (map_[rows_ - y][x - 1] == '^')
+    {
+        return true;
+    }
+    else if (map_[rows_ - y][x - 1] == 'v')
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool Intro::isRock(int x, int y)
+{
+    return map_[rows_ - y][x - 1] == 'r';
+}
+
+bool Intro::isPod(int x, int y)
+{
+    return map_[rows_ - y][x - 1] == 'p';
+}
 
 bool Intro::getChanged() const
 {
     return changed_;
 }
-
 
 int Intro::getZombie() const
 {
@@ -275,6 +735,25 @@ int Intro::getZombie() const
 int Intro::getCol() const
 {
     return col_;
+}
+
+void Intro::removeTrail()
+{
+    Alien alien;
+    char objects[] = {' ', ' ', ' ', ' ', 'p', 'h', 'h', 'r', '^', '<', '>', 'v'};
+    int noObjects = size(objects);
+
+    for (int i = 0; i < rows_; i++)
+    {
+        for (int j = 0; j < col_; j++)
+        {
+            int noObj = rand() % noObjects;
+            if (map_[i][j] == '.')
+            {
+                setObject(j + 1, rows_ - i, objects[noObj]);
+            }
+        }
+    }
 }
 
 int Intro::getRows() const
@@ -291,8 +770,9 @@ void Intro::mapinit(int rows, int col, int zombie)
 {
     rows_ = rows;
     col_ = col;
+    zombie_ = zombie;
 
-    char objects[] = {' ', ' ', ' ', ' ', ' ', ' ', 'p', 'h', 'h', 'r', '2', '^', '<', '>', 'v', 'r'};
+    char objects[] = {' ', ' ', ' ', ' ', 'p', 'h', 'h', 'r', '^', '<', '>', 'v'};
     int noObjects = size(objects);
     // dynamic 2D array
     map_.resize(rows_); // create empty rows
@@ -352,30 +832,29 @@ void Intro::displayGame()
     }
     cout << "+" << endl;
 
-    cout << " ";
+    cout << "             ";
     // column numbering displays
     for (int j = 0; j < col_; j++)
     {
         int n = (j + 1) / 10;
-        cout << " ";
+        cout << " "; // between
         if (n == 0)
         {
-            cout << " ";
+            cout << setw(3);
         }
         else
         {
-            cout << n;
+            cout << n << "  ";
         }
     }
     cout << endl;
-    cout << " ";
+    cout << "    ";
     for (int j = 0; j < col_; j++)
     {
-        cout << " " << (j + 1) % 10;
+        cout << " " << (j + 1) % 10 << "  ";
     }
     cout << endl
          << endl;
-    alien.charAttri();
 }
 
 void Intro::displayIntro()
@@ -476,7 +955,7 @@ void Intro::changeSettings()
     {
         cout << "Invalid input. Please enter an odd integer value => ";
         cin.clear();
-        cin.ignore(INT_MAX, '\n'); // to clear input buffer 
+        cin.ignore(INT_MAX, '\n'); // to clear input buffer
     }
 
     cout << "Enter columns => ";
@@ -492,8 +971,13 @@ void Intro::changeSettings()
 
     cout << "Zombie Settings" << endl;
     cout << "-----------------" << endl;
-    cout << "Enter the number of Zombies => ";
-    cin >> zombie_;
+    cout << "Enter the number of zombies => ";
+    while (!(cin >> zombie_) || (zombie_ <= 0))
+    {
+        cout << "Invalid input. Please enter an  integer value or greater than 0 => ";
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+    }
 
     cout << "Settings updated" << endl;
     pf::Pause();
@@ -501,14 +985,3 @@ void Intro::changeSettings()
     changed_ = true;
     intro.newBoard(intro, rows_, col_, zombie_, changed_);
 }
-
-
-
-
-/* 
-display intro
-display game
-
-
-
- */
