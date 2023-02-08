@@ -24,11 +24,11 @@ void run()
 
     Intro intro;
     Alien alien;
-     alien.randomAttri();
+     alien.randomAttri(intro);
     // initialisers
     alien.alienPos(intro);
     intro.displayIntro();
-    alien.charAttri();
+    alien.charAttri(intro);
     // when the user change settings
 
     if (intro.getChanged() == true)
@@ -44,7 +44,7 @@ void run()
             pf::ClearScreen();
 
             intro.displayGame();
-             alien.charAttri();
+             alien.charAttri(intro);
             
         }
     }
