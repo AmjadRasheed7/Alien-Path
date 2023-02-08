@@ -48,7 +48,7 @@ private:
     int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
-    int random_life, random_attack, random_range;
+    int random_life[9], random_attack[9], random_range[9];
 
 
 public:
@@ -57,7 +57,7 @@ public:
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
     void charAttri(Intro &intro);
-    void randomAttri();
+    void randomAttri(Intro &intro);
     int newAlienPosX(Intro &intro);
     int newAlienPosY(Intro &intro);
     void alienUp(Intro &intro);
@@ -69,4 +69,5 @@ public:
     void moveUp(Intro &intro);
     void moveDown(Intro &intro);
     void changeArrow(Intro &intro);
+    void zombiePos(Intro &intro);
 };
