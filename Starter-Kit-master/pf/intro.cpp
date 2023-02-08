@@ -49,7 +49,7 @@ private:
     int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
-    int random_life, random_attack, random_range;
+    int random_life[9], random_attack[9], random_range[9];
 
 public:
     Alien(int life = 100, int attack = 0, int range = 0);
@@ -57,7 +57,7 @@ public:
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
     void charAttri(Intro &intro);
-    void randomAttri();
+    void randomAttri(Intro &intro);
     int newAlienPosX(Intro &intro);
     int newAlienPosY(Intro &intro);
     void alienUp(Intro &intro);
@@ -69,7 +69,25 @@ public:
     void moveUp(Intro &intro);
     void moveDown(Intro &intro);
     void changeArrow(Intro &intro);
+    void zombiePos(Intro &intro);
 };
+
+void Alien::zombiePos(Intro &intro)
+{
+    srand(time(NULL));
+    for (int i = 0; i < intro.getZombie(); i++)
+    {
+        char tempZombie = '1' + i;
+        y_ = rand() % intro.getRows() + 1;
+        x_ = rand() % intro.getCol() + 1;
+        while (intro.getObject(x_, y_) != ' ')
+        {
+            y_ = rand() % intro.getRows() + 1;
+            x_ = rand() % intro.getCol() + 1;
+        }
+        intro.setObject(x_, y_, tempZombie);
+    }
+}
 
 void Alien::moveLeft(Intro &intro)
 {
@@ -84,9 +102,11 @@ void Alien::moveLeft(Intro &intro)
             pf::ClearScreen();
             break;
         }
-        else if(intro.isHealth(x_ -1, y_)){
+        else if (intro.isHealth(x_ - 1, y_))
+        {
             life_ = life_ + 20;
-            if(life_ > 100){
+            if (life_ > 100)
+            {
                 life_ = 100;
             }
             intro.displayGame();
@@ -104,7 +124,8 @@ void Alien::moveLeft(Intro &intro)
             pf::ClearScreen();
             break;
         }
-        else if(intro.isPod(x_ - 1, y_)){
+        else if (intro.isPod(x_ - 1, y_))
+        {
             // REDUCE ZOMBIE HEALTH.
         }
         else if (intro.getObject(x_ - 1, y_) == '>')
@@ -190,9 +211,11 @@ void Alien::moveRight(Intro &intro)
             pf::ClearScreen();
             break;
         }
-        else if(intro.isHealth(x_ + 1, y_)){
+        else if (intro.isHealth(x_ + 1, y_))
+        {
             life_ = life_ + 20;
-            if(life_ > 100){
+            if (life_ > 100)
+            {
                 life_ = 100;
             }
             intro.displayGame();
@@ -201,7 +224,8 @@ void Alien::moveRight(Intro &intro)
             pf::Pause();
             pf::ClearScreen();
         }
-        else if(intro.isPod(x_ + 1, y_)){
+        else if (intro.isPod(x_ + 1, y_))
+        {
             // REDUCE ZOMBIE HEALTH.
         }
         else if (intro.getObject(x_ + 1, y_) == '^')
@@ -286,12 +310,15 @@ void Alien::moveUp(Intro &intro)
             pf::ClearScreen();
             break;
         }
-        else if(intro.isPod(x_, y_ + 1)){
+        else if (intro.isPod(x_, y_ + 1))
+        {
             // REDUCE ZOMBIE HEALTH.
         }
-        else if(intro.isHealth(x_, y_ + 1)){
+        else if (intro.isHealth(x_, y_ + 1))
+        {
             life_ = life_ + 20;
-            if(life_ > 100){
+            if (life_ > 100)
+            {
                 life_ = 100;
             }
             intro.displayGame();
@@ -322,7 +349,6 @@ void Alien::moveUp(Intro &intro)
             cout << "Alien picks up an arrow, and attack increased by 20." << endl;
             pf::Pause();
             pf::ClearScreen();
-
         }
         else if (intro.getObject(x_, y_ + 1) == '<')
         {
@@ -384,12 +410,15 @@ void Alien::moveDown(Intro &intro)
             pf::ClearScreen();
             break;
         }
-        else if(intro.isPod(x_, y_ - 1)){
+        else if (intro.isPod(x_, y_ - 1))
+        {
             // REDUCE ZOMBIE HEALTH.
         }
-        else if(intro.isHealth(x_, y_ - 1)){
+        else if (intro.isHealth(x_, y_ - 1))
+        {
             life_ = life_ + 20;
-            if(life_ > 100){
+            if (life_ > 100)
+            {
                 life_ = 100;
             }
             intro.displayGame();
@@ -412,7 +441,8 @@ void Alien::moveDown(Intro &intro)
             moveRight(intro);
             break;
         }
-        else if(intro.getObject(x_, y_ - 1) == 'v'){
+        else if (intro.getObject(x_, y_ - 1) == 'v')
+        {
             attack_ = attack_ + 20;
             intro.displayGame();
             charAttri(intro);
@@ -462,18 +492,26 @@ void Alien::moveDown(Intro &intro)
 void Alien::charAttri(Intro &intro)
 {
     cout << "Alien   : Life " << life_ << " attack " << attack_ << endl;
-     for (int i = 0; i < intro.getZombie(); i++)
-    {
-    cout << "Zombie "
-         << " : Life " << zombie_life[random_life] << " attack " << zombie_attack[random_attack] << " range : " << zombie_range[random_range] << endl;
-    }
+     for (int i = 1; i <= intro.getZombie(); i++)
+    { 
+    cout << "Zombie "<< i << " : Life " << random_life[i] << " attack " << random_attack[i] << " range : " << random_range[i] << endl;
+  
+  
+   
+    
+}
 }
 
-void Alien::randomAttri()
+void Alien::randomAttri(Intro &intro)
 {
-    random_life = rand() % size(zombie_life);
-    random_attack = rand() % size(zombie_attack);
-    random_range = rand() % size(zombie_range);
+    for (int i = 1; i <= intro.getZombie(); i++)
+{   
+    random_life[i] = zombie_life[rand() % size(zombie_life)];
+    random_attack[i] = zombie_attack[rand() % size(zombie_attack)];
+    random_range[i] = zombie_range[rand() % size(zombie_range)];
+
+    
+}
 }
 
 int Alien::newAlienPosX(Intro &intro)
@@ -630,10 +668,11 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     while (n < 1)
     {
         mapinit(rows, col, zombie);
-        alien.randomAttri();
+        alien.randomAttri(intro);
         n++;
         break;
     }
+    alien.zombiePos(intro);
     alien.alienPos(intro);
     while (true)
     {
@@ -644,7 +683,8 @@ void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
     }
 }
 
-bool Intro::isHealth(int x, int y){
+bool Intro::isHealth(int x, int y)
+{
     return map_[rows_ - y][x - 1] == 'h';
 }
 
@@ -677,7 +717,8 @@ bool Intro::isRock(int x, int y)
     return map_[rows_ - y][x - 1] == 'r';
 }
 
-bool Intro::isPod(int x, int y){
+bool Intro::isPod(int x, int y)
+{
     return map_[rows_ - y][x - 1] == 'p';
 }
 
@@ -719,7 +760,6 @@ int Intro::getRows() const
 {
     return rows_;
 }
-
 
 void Intro::setObject(int col, int rows, char ch)
 {
@@ -929,11 +969,10 @@ void Intro::changeSettings()
     cout << endl;
     cout << endl;
 
-
     cout << "Zombie Settings" << endl;
     cout << "-----------------" << endl;
     cout << "Enter the number of zombies => ";
-    while (!(cin >> zombie_) || (zombie_ <= 0))
+    while (!(cin >> zombie_) || (zombie_ <= 0) || (zombie_ >= 10))
     {
         cout << "Invalid input. Please enter an  integer value or greater than 0 => ";
         cin.clear();
