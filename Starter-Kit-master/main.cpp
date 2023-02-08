@@ -24,15 +24,16 @@ void run()
 
     Intro intro;
     Alien alien;
-     alien.randomAttri();
     // initialisers
+    alien.randomAttri(intro);
+    alien.zombiePos(intro);
     alien.alienPos(intro);
     intro.displayIntro();
     alien.charAttri(intro);
     // when the user change settings
 
     if (intro.getChanged() == true)
-    {   
+    {
         pf::ClearScreen();
         intro.newBoard(intro, intro.getRows(), intro.getCol(), intro.getZombie(), intro.getChanged());
     }
@@ -44,16 +45,14 @@ void run()
             pf::ClearScreen();
 
             intro.displayGame();
-             alien.charAttri(intro);
-            
+            alien.charAttri(intro);
         }
     }
 }
 
 int main()
-{
-   
-   srand(time(NULL));
-   
+{   
+    srand(time(NULL));
+
     run();
 }
