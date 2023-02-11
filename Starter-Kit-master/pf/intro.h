@@ -49,6 +49,10 @@ private:
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
     int random_life[9], random_attack[9], random_range[9];
+    char zombies[9] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    vector<int> zombieCoordX;
+    vector<int> zombieCoordY;
+
 
 
 public:
@@ -70,4 +74,8 @@ public:
     void moveDown(Intro &intro);
     void changeArrow(Intro &intro);
     void zombiePos(Intro &intro);
+    void showHelp(Intro &intro);
+    void zombieMove(Intro &intro);
+    vector<int> getCoordX(Intro &intro);
+    vector<int> getCoordY(Intro &intro);
 };
