@@ -84,13 +84,16 @@ void Alien::zombieMove(Intro &intro)
 {
     for (int i = 0; i < intro.getZombie(); i++)
     {
+        // make sure the zombies dont overwrite the 'A' and other zombies '1','2','3',....'9'
+        
+        // random direction generator for zombies
         char decision[4] = {'l', 'r', 'u', 'd'};
         int r = rand() % 4;
         decision[i] = decision[r];
 
         if (decision[i] == 'r')
         {
-            // top right corner
+            // top right corner (to prevent zombies from leaving the map)
             if ((zombieCoordX[i] > intro.getCol() - 1) && ((zombieCoordY[i] > intro.getRows() - 1)))
             {
                 char newdecr[2] = {'l', 'd'};
@@ -149,6 +152,7 @@ void Alien::zombieMove(Intro &intro)
                     continue;
                 }
             }
+            // if zombies is at right border
             else if ((zombieCoordX[i] > intro.getCol() - 1))
             {
                 char newdecr[3] = {'l', 'd', 'u'};
@@ -259,6 +263,7 @@ void Alien::zombieMove(Intro &intro)
                     continue;
                 }  
             }
+            // if zombies is at left border
             else if ((zombieCoordX[i] < 2))
             {
                 char newdecl[3] = {'r', 'd', 'u'};
@@ -372,6 +377,7 @@ void Alien::zombieMove(Intro &intro)
                 }
 
             }
+            // if zombie is at top border
             else if ((zombieCoordY[i] > intro.getRows() - 1))
             {
                 char newdecu[3] = {'l', 'd', 'r'};
@@ -482,6 +488,7 @@ void Alien::zombieMove(Intro &intro)
                     continue;
                 }  
             }
+            // if zombie is at bottom border
             else if ((zombieCoordY[i] < 2))
             {
                 char newdecd[3] = {'l', 'r', 'u'};
