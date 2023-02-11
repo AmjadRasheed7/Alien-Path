@@ -80,7 +80,6 @@ public:
     vector<int> getCoordY(Intro &intro);
 };
 
-
 void Alien::zombieMove(Intro &intro)
 {
     for (int i = 0; i < intro.getZombie(); i++)
@@ -91,17 +90,66 @@ void Alien::zombieMove(Intro &intro)
 
         if (decision[i] == 'r')
         {
-            if ((zombieCoordX[i] > intro.getCol() - 1) ||
-                intro.getObject(zombieCoordX[i] + 1, zombieCoordY[i]) == '1' ||
-                intro.getObject(zombieCoordX[i] + 1, zombieCoordY[i]) == '2' ||
-                intro.getObject(zombieCoordX[i] + 1, zombieCoordY[i]) == '3' ||
-                intro.getObject(zombieCoordX[i] + 1, zombieCoordY[i]) == '4' ||
-                intro.getObject(zombieCoordX[i] + 1, zombieCoordY[i]) == '5' ||
-                intro.getObject(zombieCoordX[i] + 1, zombieCoordY[i]) == '6' ||
-                intro.getObject(zombieCoordX[i] + 1, zombieCoordY[i]) == '7' ||
-                intro.getObject(zombieCoordX[i] + 1, zombieCoordY[i]) == '8' ||
-                intro.getObject(zombieCoordX[i] + 1, zombieCoordY[i]) == '9' ||
-                intro.getObject(zombieCoordX[i] + 1, zombieCoordY[i]) == 'A')
+            // top right corner
+            if ((zombieCoordX[i] > intro.getCol() - 1) && ((zombieCoordY[i] > intro.getRows() - 1)))
+            {
+                char newdecr[2] = {'l', 'd'};
+                int r2 = rand() % 2;
+                newdecr[i] = newdecr[r2];
+                if (newdecr[i] == 'l')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordX[i]--;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved left by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+                
+                else if (newdecr[i] == 'd')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordY[i]--;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved down by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+            }
+            // bot right corner
+            else if ((zombieCoordX[i] > intro.getCol() - 1) && (zombieCoordY[i] < 2))
+            {
+                char newdecr[2] = {'l', 'u'};
+                int r2 = rand() % 2;
+                newdecr[i] = newdecr[r2];
+                if (newdecr[i] == 'l')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordX[i]--;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved left by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+                else if (newdecr[i] == 'u')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordY[i]++;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved up by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+            }
+            else if ((zombieCoordX[i] > intro.getCol() - 1))
             {
                 char newdecr[3] = {'l', 'd', 'u'};
                 int r2 = rand() % 3;
@@ -140,30 +188,78 @@ void Alien::zombieMove(Intro &intro)
                     continue;
                 }
             }
-            else{
-            intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
-            zombieCoordX[i]++;
-            intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
-            intro.displayGame();
-            cout << "Zombie " << i + 1 << "have moved right by one." << endl;
-            pf::Pause();
-            pf::ClearScreen();
-            continue;
+            else
+            {
+                intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                zombieCoordX[i]++;
+                intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                intro.displayGame();
+                cout << "Zombie " << i + 1 << "have moved right by one." << endl;
+                pf::Pause();
+                pf::ClearScreen();
+                continue;
             }
         }
         else if (decision[i] == 'l')
         {
-            if (!(zombieCoordX[i] > 1) ||
-                intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '1' ||
-                intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '2' ||
-                intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '3' ||
-                intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '4' ||
-                intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '5' ||
-                intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '6' ||
-                intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '7' ||
-                intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '8' ||
-                intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '9' ||
-                intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == 'A')
+            // top left corner
+            if((zombieCoordX[i] < 2) && (zombieCoordY[i] > intro.getRows() - 1)){
+                char newdecl[2] = {'r', 'd'};
+                int r3 = rand() % 3;
+                newdecl[i] = newdecl[r3];
+                if (newdecl[i] == 'r')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordX[i]++;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved right by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+                else if (newdecl[i] == 'd')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordY[i]--;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved down by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+
+            }
+            // bot left corner
+            else if((zombieCoordX[i] < 2) && (zombieCoordY[i] < 2)){
+                char newdecl[2] = {'r', 'u'};
+                int r3 = rand() % 2;
+                newdecl[i] = newdecl[r3];
+                if (newdecl[i] == 'r')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordX[i]++;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved right by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+                else if (newdecl[i] == 'u')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordY[i]++;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved up by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }  
+            }
+            else if ((zombieCoordX[i] < 2))
             {
                 char newdecl[3] = {'r', 'd', 'u'};
                 int r3 = rand() % 3;
@@ -203,30 +299,80 @@ void Alien::zombieMove(Intro &intro)
                 }
             }
 
-            else{
-            intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
-            zombieCoordX[i]--;
-            intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
-            intro.displayGame();
-            cout << "Zombie " << i + 1 << "have moved left by one." << endl;
-            pf::Pause();
-            pf::ClearScreen();
-            continue;
+            else
+            {
+                intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                zombieCoordX[i]--;
+                intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                intro.displayGame();
+                cout << "Zombie " << i + 1 << "have moved left by one." << endl;
+                pf::Pause();
+                pf::ClearScreen();
+                continue;
             }
         }
         else if (decision[i] == 'u')
         {
-            if ((zombieCoordY[i] > intro.getRows() - 1) ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] + 1) == '1' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] + 1) == '2' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] + 1) == '3' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] + 1) == '4' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] + 1) == '5' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] + 1) == '6' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] + 1) == '7' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] + 1) == '8' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] + 1) == '9' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] + 1) == 'A')
+            // top right corner
+            if ((zombieCoordX[i] > intro.getCol() - 1) && ((zombieCoordY[i] > intro.getRows() - 1)))
+            {
+                char newdecr[2] = {'l', 'd'};
+                int r2 = rand() % 2;
+                newdecr[i] = newdecr[r2];
+                if (newdecr[i] == 'l')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordX[i]--;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved left by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+                
+                else if (newdecr[i] == 'd')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordY[i]--;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved down by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+            }
+            // top left corner
+            else if((zombieCoordX[i] < 2) && (zombieCoordY[i] > intro.getRows() - 1)){
+                char newdecl[2] = {'r', 'd'};
+                int r3 = rand() % 2;
+                newdecl[i] = newdecl[r3];
+                if (newdecl[i] == 'r')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordX[i]++;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved right by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+                else if (newdecl[i] == 'd')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordY[i]--;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved down by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+
+            }
+            else if ((zombieCoordY[i] > intro.getRows() - 1))
             {
                 char newdecu[3] = {'l', 'd', 'r'};
                 int r3 = rand() % 3;
@@ -265,30 +411,78 @@ void Alien::zombieMove(Intro &intro)
                     continue;
                 }
             }
-            else{
-            intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
-            zombieCoordY[i]++;
-            intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
-            intro.displayGame();
-            cout << "Zombie " << i + 1 << "have moved up by one." << endl;
-            pf::Pause();
-            pf::ClearScreen();
-            continue;
+            else
+            {
+                intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                zombieCoordY[i]++;
+                intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                intro.displayGame();
+                cout << "Zombie " << i + 1 << "have moved up by one." << endl;
+                pf::Pause();
+                pf::ClearScreen();
+                continue;
             }
         }
         else if (decision[i] == 'd')
         {
-            if ((zombieCoordY[i] < 2) ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '1' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '2' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '3' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '4' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '5' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '6' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '7' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '8' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '9' ||
-                intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == 'A')
+            // bot right corner
+            if ((zombieCoordX[i] > intro.getCol() - 1) && (zombieCoordY[i] < 2))
+            {
+                char newdecr[2] = {'l', 'u'};
+                int r2 = rand() % 2;
+                newdecr[i] = newdecr[r2];
+                if (newdecr[i] == 'l')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordX[i]--;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved left by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+                else if (newdecr[i] == 'u')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordY[i]++;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved up by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+            }
+             // bot left corner
+            else if((zombieCoordX[i] < 2) && (zombieCoordY[i] < 2)){
+                char newdecl[2] = {'r', 'u'};
+                int r3 = rand() % 3;
+                newdecl[i] = newdecl[r3];
+                if (newdecl[i] == 'r')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordX[i]++;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved right by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }
+                else if (newdecl[i] == 'u')
+                {
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                    zombieCoordY[i]++;
+                    intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                    intro.displayGame();
+                    cout << "Zombie " << i + 1 << "have moved up by one." << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    continue;
+                }  
+            }
+            else if ((zombieCoordY[i] < 2))
             {
                 char newdecd[3] = {'l', 'r', 'u'};
                 int r4 = rand() % 3;
@@ -315,7 +509,8 @@ void Alien::zombieMove(Intro &intro)
                     pf::ClearScreen();
                     continue;
                 }
-                else if(newdecd[i] == 'u'){
+                else if (newdecd[i] == 'u')
+                {
                     intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
                     zombieCoordY[i]++;
                     intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
@@ -326,15 +521,16 @@ void Alien::zombieMove(Intro &intro)
                     continue;
                 }
             }
-            else{
-            intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
-            zombieCoordY[i]--;
-            intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
-            intro.displayGame();
-            cout << "Zombie " << i + 1 << "have moved down by one." << endl;
-            pf::Pause();
-            pf::ClearScreen();
-            continue;
+            else
+            {
+                intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
+                zombieCoordY[i]--;
+                intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
+                intro.displayGame();
+                cout << "Zombie " << i + 1 << "have moved down by one." << endl;
+                pf::Pause();
+                pf::ClearScreen();
+                continue;
             }
         }
     }
