@@ -54,7 +54,6 @@ private:
     vector<int> zombieCoordY;
 
 
-
 public:
     Alien(int life = 100, int attack = 0, int range = 0);
     void alienPos(Intro &intro);
@@ -78,4 +77,7 @@ public:
     void zombieMove(Intro &intro);
     vector<int> getCoordX(Intro &intro);
     vector<int> getCoordY(Intro &intro);
+    void closestZombie(Intro &intro);
+    void hitZombie(Intro intro, int x, int y);
+    bool isAlive();
 };
