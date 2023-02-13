@@ -35,6 +35,7 @@ public:
     bool isArrow(int x, int y);
     bool isHealth(int x, int y);
     bool isPod(int x, int y);
+    void setZombie(int newZombie);
     bool isObject(int x, int y);
     
 };
@@ -49,14 +50,16 @@ private:
     int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
-    int random_life[9], random_attack[9], random_range[9];
-    char zombies[9] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    vector<int> random_life; 
+    vector<int> random_attack;
+    vector<int> random_range;
+    vector<char> zombies = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
     vector<int> zombieCoordX;
     vector<int> zombieCoordY;
-
+    int count = 0;
 
 public:
-    Alien(int life = 100, int attack = 0, int range = 0);
+   Alien(int life = 100, int attack = 0, int range = 0);
     void alienPos(Intro &intro);
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
@@ -79,7 +82,8 @@ public:
     vector<int> getCoordX(Intro &intro);
     vector<int> getCoordY(Intro &intro);
     void closestZombie(Intro &intro);
-    void hitZombie(Intro intro, int x, int y);
-    bool isAlive();
+    void hitZombie(Intro &intro, int x, int y);
+    void deadZombie(Intro &intro);
     bool isMoveValid(int x, int y);
+    
 };
