@@ -35,6 +35,7 @@ public:
     bool isArrow(int x, int y);
     bool isHealth(int x, int y);
     bool isPod(int x, int y);
+    bool isObject(int x, int y);
     
 };
 
@@ -80,4 +81,5 @@ public:
     void closestZombie(Intro &intro);
     void hitZombie(Intro intro, int x, int y);
     bool isAlive();
+    bool isMoveValid(int x, int y);
 };
