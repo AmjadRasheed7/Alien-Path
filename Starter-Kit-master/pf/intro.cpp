@@ -1625,7 +1625,7 @@ void Intro::mapinit(int rows, int col, int zombie)
     col_ = col;
     zombie_ = zombie;
 
-    char objects[] = {' ', ' ', ' ', ' ', 'p', 'h', 'h', 'p', 'r', '^', '<', '>', 'v'};
+    char objects[] = {' ', ' ', ' ', ' ', 'p', 'h', 'r', '^', '<', '>', 'v'};
     int noObjects = size(objects);
     // dynamic 2D array
     map_.resize(rows_); // create empty rows
