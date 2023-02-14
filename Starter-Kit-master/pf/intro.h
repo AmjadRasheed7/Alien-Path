@@ -6,6 +6,8 @@
 #include <random>
 #include <ctime>
 #include "helper.h"
+#include <algorithm>
+#include <cctype>
 
 using namespace std;
 class Intro{
@@ -85,5 +87,5 @@ public:
     void hitZombie(Intro &intro, int x, int y);
     void deadZombie(Intro &intro);
     bool isMoveValid(int x, int y);
-    
+    void zombieAttack(Intro &intro);
 };
