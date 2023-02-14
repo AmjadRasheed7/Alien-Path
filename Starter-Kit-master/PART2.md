@@ -23,6 +23,8 @@ List all the features completed.
 11. Pods deals damage to the closest zombie.
 12. Alien now damages zombies directly and stops if zombie is alive.
 13. Zombies are now removed from the map when their hp reaches 0.
+14. Zombies now can detect alien and attack according to their range.
+15. Added arrow, help, quit commands.
 
 ### To Do
 
