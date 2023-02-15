@@ -16,6 +16,8 @@
 #include <iomanip>
 #include <array>
 #include <random>
+#include <fstream>
+#inculde <string>
 #include <ctime>
 using namespace std;
 
@@ -55,4 +57,23 @@ int main()
     srand(time(NULL));
 
     run();
+      fstream myfile; //the file name
+    myfile.open("Alien&Zombie.txt", ios::out); // write
+    if (myfile.is_open())
+    {
+ 
+myfile.close();
+    }
+
+    myfile.open("Alien&Zombie.txt", ios::in); // read
+    if (myfile.is_open())
+    {
+string line;
+while (getline(myfile, line))
+{
+cout << line << endl;
+
+}
+myfile.close();
+    }
 }
