@@ -41,6 +41,7 @@ public:
     bool isPod(int x, int y);
     void setZombie(int newZombie);
     bool isObject(int x, int y);
+    void init();
 };
 
 class Alien
@@ -49,7 +50,7 @@ private:
     int life_, attack_, range_, x_, y_, zombie2_;
     bool redir_;
     char alien_; // 'A'
-    string dir_; // up, down, left, right
+    string dir_; // up, down, left, right and other commands
     int zombie_life[5] = {100, 150, 200, 250, 300};
     int zombie_attack[4] = {5, 10, 15, 20};
     int zombie_range[3] = {1, 2, 3};
@@ -62,7 +63,7 @@ private:
     int count = 0;
 
 public:
-    Alien(int life = 100, int attack = 0, int range = 0);
+    Alien(int life = 100, int attack = 550, int range = 0);
     void alienPos(Intro &intro);
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
@@ -89,63 +90,163 @@ public:
     void deadZombie(Intro &intro);
     bool isMoveValid(int x, int y);
     void zombieAttack(Intro &intro);
+    bool isWin(Intro &intro);
+    bool isLose();
+    void result(Intro &intro);
+    void playAgain(Intro &intro);
+    void resetGame(Intro &intro);
 };
+
+void Alien::resetGame(Intro &intro){
+    intro.init();
+    intro.mapinit(intro.getRows(), intro.getCol(), intro.getZombie());
+    randomAttri(intro);
+    alienPos(intro);
+    zombiePos(intro);
+    intro.displayIntro();
+    life_ = 100;
+
+}
+
+void Alien::playAgain(Intro &intro){
+    cout << "Do you want to play again? (y/n) =>  ";
+    dir_.clear();
+    cin >> dir_;
+    cout << endl;
+    transform(dir_.begin(), dir_.end(), dir_.begin(), ::tolower);
+    if (dir_ == "y")
+    {
+        cout << "Very well! You may proceed." << endl;
+        pf::Pause();
+        pf::ClearScreen();
+        dir_.clear();
+        resetGame(intro);
+
+
+    }
+    else if (dir_ == "n")
+    {
+        cout << "See you next time!" << endl;
+        pf::Pause();
+        pf::ClearScreen();
+        dir_.clear();
+        exit(0);
+    }
+}
+
+void Alien::result(Intro &intro)
+{
+    if (isWin(intro))
+    {
+        cout << "You Win!" << endl;
+        playAgain(intro);
+    }
+    else if (isLose())
+    {
+        cout << "You Lose!" << endl;
+        playAgain(intro);
+    }
+}
+
+bool Alien::isWin(Intro &intro)
+{
+    if (intro.getZombie() == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool Alien::isLose()
+{
+    if (life_ == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
 void Alien::zombieAttack(Intro &intro)
 {
     for (int i = 0; i < intro.getZombie(); i++)
     {
-        int range = random_range[i]; // range of current zombie
+        int range = random_range[i]; // range of the current zombie
 
-        // check if alien is above zombie and looking beyond borders.
-        if (zombieCoordY[i] + range < intro.getRows() && intro.getObject(zombieCoordX[i], zombieCoordY[i] + range) == 'A')
+        // if alien is within the range
+        for (int j = 1; j <= range; j++)
         {
-            life_ -= 15;
-            intro.displayGame();
-            charAttri(intro);
-            cout << "Zombie " << zombies[i] << " attacks the Alien." << endl;
-            cout << "Alien receives a damage of 15." << endl;
-            pf::Pause();
-            pf::ClearScreen();
+            if (zombieCoordY[i] + j < intro.getRows() + 1 && intro.getObject(zombieCoordX[i], zombieCoordY[i] + j) == 'A')
+            {
+                life_ -= random_attack[i];
+                if (life_ < 0)
+                {
+                    life_ = 0;
+                }
+                intro.displayGame();
+                charAttri(intro);
+                cout << "Zombie " << zombies[i] << " attacks the Alien." << endl;
+                cout << "Alien receives a damage of " << random_attack[i] << "." << endl;
+                pf::Pause();
+                pf::ClearScreen();
+                break;
+            }
+            else if (zombieCoordY[i] - j >= 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - j) == 'A')
+            {
+                life_ -= random_attack[i];
+                if (life_ < 0)
+                {
+                    life_ = 0;
+                }
+                intro.displayGame();
+                charAttri(intro);
+                cout << "Zombie " << zombies[i] << " attacks the Alien." << endl;
+                cout << "Alien receives a damage of " << random_attack[i] << "." << endl;
+                pf::Pause();
+                pf::ClearScreen();
+                break;
+            }
+            else if (zombieCoordX[i] + j < intro.getCol() && intro.getObject(zombieCoordX[i] + j, zombieCoordY[i]) == 'A')
+            {
+                life_ -= random_attack[i];
+                if (life_ < 0)
+                {
+                    life_ = 0;
+                }
+                intro.displayGame();
+                charAttri(intro);
+                cout << "Zombie " << zombies[i] << " attacks the Alien." << endl;
+                cout << "Alien receives a damage of " << random_attack[i] << "." << endl;
+                pf::Pause();
+                pf::ClearScreen();
+                break;
+            }
+            else if (zombieCoordX[i] - j >= 0 && intro.getObject(zombieCoordX[i] - j, zombieCoordY[i]) == 'A')
+            {
+                life_ -= random_attack[i];
+                if (life_ < 0)
+                {
+                    life_ = 0;
+                }
+                intro.displayGame();
+                charAttri(intro);
+                cout << "Zombie " << zombies[i] << " attacks the Alien." << endl;
+                cout << "Alien receives a damage of " << random_attack[i] << "." << endl;
+                pf::Pause();
+                pf::ClearScreen();
+                break;
+            }
         }
-        // check if alien is below zombie and looking beyond borders.
-        else if (zombieCoordY[i] - range >= 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - range) == 'A')
-        {
-            life_ -= 15;
-            intro.displayGame();
-            charAttri(intro);
-            cout << "Zombie " << zombies[i] << " attacks the Alien." << endl;
-            cout << "Alien receives a damage of 15." << endl;
-            pf::Pause();
-            pf::ClearScreen();
-        }
-        // checck if alien is right of zombie and looking beyond borders.
-        else if (zombieCoordX[i] + range < intro.getCol() && intro.getObject(zombieCoordX[i] + range, zombieCoordY[i]) == 'A')
-        {
-            life_ -= 15;
-            intro.displayGame();
-            charAttri(intro);
-            cout << "Zombie " << zombies[i] << " attacks the Alien." << endl;
-            cout << "Alien receives a damage of 15." << endl;
-            pf::Pause();
-            pf::ClearScreen();
-        }
-        // check  if alien  is left of zombie and looking beyond borders.
-        else if (zombieCoordX[i] - range >= 0 && intro.getObject(zombieCoordX[i] - range, zombieCoordY[i]) == 'A')
-        {
-            life_ -= 15;
-            intro.displayGame();
-            charAttri(intro);
-            cout << "Zombie " << zombies[i] << " attacks the Alien." << endl;
-            cout << "Alien receives a damage of 15." << endl;
-            pf::Pause();
-            pf::ClearScreen();
-        }
-        else
+        // if alien is not in range
+        if (life_ > 0)
         {
             intro.displayGame();
             charAttri(intro);
-            cout << "Zombie " << zombies[i] << " is not in range" << endl;
             cout << "Zombie " << zombies[i] << " ends its turn." << endl;
             pf::Pause();
             pf::ClearScreen();
@@ -830,16 +931,16 @@ void Alien::zombiePos(Intro &intro)
     srand(time(NULL));
     for (int i = 0; i < intro.getZombie(); i++)
     {
-        y_ = rand() % intro.getRows() + 1;
-        x_ = rand() % intro.getCol() + 1;
-        while (intro.getObject(x_, y_) != ' ')
+        int y = rand() % intro.getRows() + 1;
+        int x = rand() % intro.getCol() + 1;
+        while (intro.getObject(x, y) != ' ')
         {
-            y_ = rand() % intro.getRows() + 1;
-            x_ = rand() % intro.getCol() + 1;
+            y = rand() % intro.getRows() + 1;
+            x = rand() % intro.getCol() + 1;
         }
-        zombieCoordX.push_back(x_);
-        zombieCoordY.push_back(y_);
-        intro.setObject(x_, y_, zombies[i]);
+        zombieCoordX.push_back(x);
+        zombieCoordY.push_back(y);
+        intro.setObject(x, y, zombies[i]);
     }
 }
 
@@ -904,9 +1005,9 @@ void Alien::moveLeft(Intro &intro)
             intro.displayGame();
             charAttri(intro);
             cout << "Alien have damaged the zombie by " << attack_ << "." << endl;
-            attack_ = 0;
             if (intro.isZombie(x_ - 1, y_))
             {
+                attack_ = 0;
                 cout << "However, the zombie is still alive." << endl;
                 pf::Pause();
                 pf::ClearScreen();
@@ -1037,9 +1138,9 @@ void Alien::moveRight(Intro &intro)
             intro.displayGame();
             charAttri(intro);
             cout << "Alien have damaged the zombie by " << attack_ << "." << endl;
-            attack_ = 0;
             if (intro.isZombie(x_ + 1, y_))
             {
+                attack_ = 0;
                 cout << "However, the zombie is still alive." << endl;
                 pf::Pause();
                 pf::ClearScreen();
@@ -1144,9 +1245,9 @@ void Alien::moveUp(Intro &intro)
             intro.displayGame();
             charAttri(intro);
             cout << "Alien have damaged the zombie by " << attack_ << "." << endl;
-            attack_ = 0;
             if (intro.isZombie(x_, y_ + 1))
             {
+                attack_ = 0;
                 cout << "However, the zombie is still alive." << endl;
                 pf::Pause();
                 pf::ClearScreen();
@@ -1277,9 +1378,9 @@ void Alien::moveDown(Intro &intro)
             intro.displayGame();
             charAttri(intro);
             cout << "Alien have damaged the zombie by " << attack_ << "." << endl;
-            attack_ = 0;
             if (intro.isZombie(x_, y_ - 1))
             {
+                attack_ = 0;
                 cout << "However, the zombie is still alive." << endl;
                 pf::Pause();
                 pf::ClearScreen();
@@ -1540,13 +1641,13 @@ void Alien::move(Intro &intro)
             }
         }
     }
-    else{
+    else
+    {
         intro.displayGame();
         charAttri(intro);
         cout << "Invalid input, type 'help' to see available commands." << endl;
         pf::Pause();
         pf::ClearScreen();
-
     }
 
     while (zombieTurn == true)
@@ -1554,6 +1655,7 @@ void Alien::move(Intro &intro)
 
         zombieMove(intro);
         zombieAttack(intro);
+        result(intro);
         zombieTurn = false;
         break;
     }
@@ -1754,6 +1856,14 @@ int Intro::getZombie() const
 int Intro::getCol() const
 {
     return col_;
+}
+
+void Intro::init(){
+    rows_ = 5;
+    col_ = 9;
+    zombie_ = 1;
+    changed_ = false;
+    choice_ = "";
 }
 
 void Intro::removeTrail()
