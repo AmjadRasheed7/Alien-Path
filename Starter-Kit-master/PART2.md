@@ -25,6 +25,8 @@ List all the features completed.
 13. Zombies are now removed from the map when their hp reaches 0.
 14. Zombies now can detect alien and attack according to their range.
 15. Added arrow, help, quit commands.
+16. Alien wins if all zombies are dead, Alien loses if its life is = 0.
+17. Added play again after winning or losing.
 
 ### To Do
 
