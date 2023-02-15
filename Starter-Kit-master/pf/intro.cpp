@@ -63,7 +63,7 @@ private:
     int count = 0;
 
 public:
-    Alien(int life = 100, int attack = 550, int range = 0);
+    Alien(int life = 100, int attack = 0, int range = 0);
     void alienPos(Intro &intro);
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
