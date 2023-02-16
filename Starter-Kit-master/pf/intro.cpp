@@ -383,7 +383,7 @@ void Alien::zombieAttack(Intro &intro, char zombies, int zombieCoordX, int zombi
             pf::ClearScreen();
             break;
         }
-        else if (zombieCoordX + j < intro.getCol() + 1 && intro.getObject(zombieCoordX + j, zombieCoordY) == 'A')
+        else if (zombieCoordX + j < intro.getCol() && intro.getObject(zombieCoordX + j, zombieCoordY) == 'A')
         {
             life_ -= random_attack;
             if (life_ < 0)
@@ -582,7 +582,7 @@ void Alien::zombieMove(Intro &intro)
             intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
             intro.displayGame();
             charAttri(intro);
-            cout << "Zombie " << zombies[i] << " have moved right by one." << endl;
+            cout << "Zombie " << zombies[i] << " have moved up by one." << endl;
             pf::Pause();
             pf::ClearScreen();
             zombieAttack(intro, zombies[i], zombieCoordX[i], zombieCoordY[i], random_range[i], random_attack[i]);
@@ -641,7 +641,7 @@ void Alien::zombieMove(Intro &intro)
             intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
             intro.displayGame();
             charAttri(intro);
-            cout << "Zombie " << zombies[i] << " have moved right by one." << endl;
+            cout << "Zombie " << zombies[i] << " have moved up by one." << endl;
             pf::Pause();
             pf::ClearScreen();
             zombieAttack(intro, zombies[i], zombieCoordX[i], zombieCoordY[i], random_range[i], random_attack[i]);
@@ -700,7 +700,7 @@ void Alien::zombieMove(Intro &intro)
             intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
             intro.displayGame();
             charAttri(intro);
-            cout << "Zombie " << zombies[i] << " have moved right by one." << endl;
+            cout << "Zombie " << zombies[i] << " have moved up by one." << endl;
             pf::Pause();
             pf::ClearScreen();
             zombieAttack(intro, zombies[i], zombieCoordX[i], zombieCoordY[i], random_range[i], random_attack[i]);
@@ -759,7 +759,7 @@ void Alien::zombieMove(Intro &intro)
             intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
             intro.displayGame();
             charAttri(intro);
-            cout << "Zombie " << zombies[i] << " have moved right by one." << endl;
+            cout << "Zombie " << zombies[i] << " have moved up by one." << endl;
             pf::Pause();
             pf::ClearScreen();
             zombieAttack(intro, zombies[i], zombieCoordX[i], zombieCoordY[i], random_range[i], random_attack[i]);
@@ -818,7 +818,7 @@ void Alien::zombieMove(Intro &intro)
             intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
             intro.displayGame();
             charAttri(intro);
-            cout << "Zombie " << zombies[i] << " have moved right by one." << endl;
+            cout << "Zombie " << zombies[i] << " have moved up by one." << endl;
             pf::Pause();
             pf::ClearScreen();
             zombieAttack(intro, zombies[i], zombieCoordX[i], zombieCoordY[i], random_range[i], random_attack[i]);
@@ -877,7 +877,7 @@ void Alien::zombieMove(Intro &intro)
             intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
             intro.displayGame();
             charAttri(intro);
-            cout << "Zombie " << zombies[i] << " have moved right by one." << endl;
+            cout << "Zombie " << zombies[i] << " have moved up by one." << endl;
             pf::Pause();
             pf::ClearScreen();
             zombieAttack(intro, zombies[i], zombieCoordX[i], zombieCoordY[i], random_range[i], random_attack[i]);
@@ -936,7 +936,7 @@ void Alien::zombieMove(Intro &intro)
             intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
             intro.displayGame();
             charAttri(intro);
-            cout << "Zombie " << zombies[i] << " have moved right by one." << endl;
+            cout << "Zombie " << zombies[i] << " have moved up by one." << endl;
             pf::Pause();
             pf::ClearScreen();
             zombieAttack(intro, zombies[i], zombieCoordX[i], zombieCoordY[i], random_range[i], random_attack[i]);
@@ -995,7 +995,7 @@ void Alien::zombieMove(Intro &intro)
             intro.setObject(zombieCoordX[i], zombieCoordY[i], zombies[i]);
             intro.displayGame();
             charAttri(intro);
-            cout << "Zombie " << zombies[i] << " have moved right by one." << endl;
+            cout << "Zombie " << zombies[i] << " have moved up by one." << endl;
             pf::Pause();
             pf::ClearScreen();
             zombieAttack(intro, zombies[i], zombieCoordX[i], zombieCoordY[i], random_range[i], random_attack[i]);
