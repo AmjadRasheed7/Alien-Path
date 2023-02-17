@@ -215,7 +215,7 @@ void Alien::loadGame(Intro &intro)
 
 void Alien::saveGame(Intro &intro)
 {
-    cout << "Enter  the rile name to save your progress => ";
+    cout << "Enter  the file name to save your progress => ";
 
     cin >> dir_;
     ofstream file(dir_);
