@@ -1,3 +1,4 @@
+#include "helper.h"
 #include <iostream>
 #include <climits>
 #include <vector>
@@ -5,22 +6,23 @@
 #include <array>
 #include <random>
 #include <ctime>
-#include "helper.h"
+#include <string>
 #include <algorithm>
 #include <cctype>
-
+#include <fstream>
 using namespace std;
+
 class Intro
 {
 private:
     string choice_;
-    int rows_, col_, zombie_;
+    int rows_, col_, zombie_, NUKE_;
     bool changed_;
     vector<vector<char>> map_;
 
 public:
     int rows, col, zombie;
-    Intro(int rows = 5, int col = 9, int zombie = 1, string choice = "", bool changed = false);
+    Intro(int rows = 5, int col = 9, int zombie = 1, int NUKE = 1, string choice = "", bool changed = false);
     void changeSettings();
     void displayIntro();
     void displayGame();
@@ -46,6 +48,8 @@ public:
     void setRows(int row);
     void setCol(int col);
     void setZombies(int zombiess);
+    bool isNUKE();
+    int getNUKE() const;
 };
 
 class Alien
