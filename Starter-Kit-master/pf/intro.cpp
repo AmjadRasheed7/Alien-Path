@@ -57,7 +57,7 @@ public:
 class Alien
 {
 private:
-    int life_, attack_, range_, x_, y_, zombie2_;
+    int life_, attack_, range_, x_, y_, zombie2_, stamina_;
     bool redir_;
     char alien_; // 'A'
     string dir_; // up, down, left, right and other commands
@@ -73,7 +73,7 @@ private:
     int count = 0;
 
 public:
-    Alien(int life = 100, int attack = 0, int range = 0);
+    Alien(int life = 100, int attack = 0, int range = 0, int stamina = 10);
     void alienPos(Intro &intro);
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
@@ -157,7 +157,7 @@ void Alien::loadGame(Intro &intro)
             file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
             while (getline(file, line))
             {
-                if(line == "Alien Col")
+                if (line == "Alien Col")
                 {
                     file >> x_;
                 }
@@ -175,9 +175,10 @@ void Alien::loadGame(Intro &intro)
                 }
             }
         }
-        else if (line == "Zombie stats") {
+        else if (line == "Zombie stats")
+        {
             pf::Pause();
-        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
+            file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
             for (int i = 1; i <= intro.getZombie(); i++)
             {
                 string zombie_name = "Zombie " + to_string(i);
@@ -192,7 +193,7 @@ void Alien::loadGame(Intro &intro)
                 zombieCoordY[i] = row;
                 pf::Pause();
             }
-            }
+        }
         else if (line == "Map data")
         {
             file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
@@ -228,7 +229,7 @@ void Alien::loadGame(Intro &intro)
 
 void Alien::saveGame(Intro &intro)
 {
-    cout << "Enter  the file name to save your progress => ";
+    cout << "Enter the file name to save your progress => ";
 
     cin >> dir_;
     ofstream file(dir_);
@@ -247,7 +248,6 @@ void Alien::saveGame(Intro &intro)
         file << intro.getCol() << endl;
         file << "Zombie Count" << endl;
         file << intro.getZombie() << endl;
-
 
         file << "Alien settings" << endl;
         file << "--------------" << endl;
@@ -516,10 +516,13 @@ void Alien::closestZombie(Intro &intro)
 
 void Alien::hitZombie(Intro &intro, int x, int y)
 {
-    for(int i = 0; i < intro.getZombie(); i++){
-        if(intro.getObject(x, y) == zombies[i]){
+    for (int i = 0; i < intro.getZombie(); i++)
+    {
+        if (intro.getObject(x, y) == zombies[i])
+        {
             random_life[i] -= attack_;
-            if(random_life[i] <=0){
+            if (random_life[i] <= 0)
+            {
                 random_life[i] = 0;
             }
             break;
@@ -1043,7 +1046,7 @@ void Alien::showHelp(Intro &intro)
          << "              - Quit the game." << endl;
     cout << "10. new "
          << "              - Start a new game." << endl;
-         cout << "11. nuke "
+    cout << "11. nuke "
          << "              - Nuke all zombies in the map." << endl;
 }
 
@@ -1595,8 +1598,10 @@ void Alien::moveDown(Intro &intro)
 
 void Alien::charAttri(Intro &intro)
 {
-    cout << setw(7) << "Nuke" 
+    cout << setw(8) << "Nuke:"
          << " " << intro.getNUKE() << endl;
+    cout << setw(11) << "Stamina:"
+         << " " << stamina_ << endl;
     cout << setw(9) << "Alien "
          << "   : Life " << life_ << " attack " << attack_ << endl;
     for (int i = 0; i <= intro.getZombie() - 1; i++)
@@ -1802,7 +1807,8 @@ void Alien::move(Intro &intro)
             for (int i = 0; i < intro.getZombie(); i++)
             {
                 random_life[i] -= 50;
-                if(random_life[i] <= 0){
+                if (random_life[i] <= 0)
+                {
                     random_life[i] = 0;
                 }
             }
@@ -1837,7 +1843,7 @@ void Alien::move(Intro &intro)
         cout << endl;
         if (dir_ == "y")
         {
-            
+
             pf::Pause();
             pf::ClearScreen();
             dir_.clear();
@@ -1904,72 +1910,88 @@ void Alien::move(Intro &intro)
 
 void Alien::changeArrow(Intro &intro)
 {
-    char object;
-    dir_.clear();
-    int row;
-    int col;
-    intro.displayGame();
-    charAttri(intro);
-    cout << "Enter rows => ";
-    while (!(cin >> row) || (row <= 0) || (row > intro.getRows()))
+    
+    if (stamina_ > 0)
     {
-        cout << "Invalid input. Please enter a valid integer value => ";
-        cin.clear();
-        cin.ignore(INT_MAX, '\n'); // to clear input buffer
-    }
-    cout << endl;
-    cout << "Enter column => ";
-    while (!(cin >> col) || (col <= 0) || (col > intro.getCol()))
-    {
-        cout << "Invalid input. Please enter a valid integer value => ";
-        cin.clear();
-        cin.ignore(INT_MAX, '\n'); // to clear input buffer
-    }
-    cout << endl;
-    cout << "Enter direction => ";
-    cin >> dir_;
-    while (dir_ != "left" && dir_ != "right" && dir_ != "up" && dir_ != "down")
-    {
-        cout << "Invalid input, please enter a valid direction => ";
-        cin.clear();
+        char object;
         dir_.clear();
-        cin.ignore(INT_MAX, '\n'); // to clear input buffer
+        int row;
+        int col;
+        intro.displayGame();
+        charAttri(intro);
+
+        stamina_ -= 1;
+        cout << "Enter rows => ";
+        while (!(cin >> row) || (row <= 0) || (row > intro.getRows()))
+        {
+            cout << "Invalid input. Please enter a valid integer value => ";
+            cin.clear();
+            cin.ignore(INT_MAX, '\n'); // to clear input buffer
+        }
+        cout << endl;
+        cout << "Enter column => ";
+        while (!(cin >> col) || (col <= 0) || (col > intro.getCol()))
+        {
+            cout << "Invalid input. Please enter a valid integer value => ";
+            cin.clear();
+            cin.ignore(INT_MAX, '\n'); // to clear input buffer
+        }
+        cout << endl;
+        cout << "Enter direction => ";
         cin >> dir_;
-    }
-    cout << endl;
-    // to find coordinates of the given values.
-    object = intro.getObject(col, intro.getRows() - row + 1);
-    if (dir_ == "left" && intro.isArrow(col, intro.getRows() - row + 1))
-    {
-        intro.setObject(col, intro.getRows() - row + 1, '<');
-        cout << "Arrow " << object << " is now switched to <" << endl;
-    }
-    else if (dir_ == "right" && intro.isArrow(col, intro.getRows() - row + 1))
-    {
-        intro.setObject(col, intro.getRows() - row + 1, '>');
-        cout << "Arrow " << object << " is now switched to >" << endl;
-    }
-    else if (dir_ == "up" && intro.isArrow(col, intro.getRows() - row + 1))
-    {
-        intro.setObject(col, intro.getRows() - row + 1, '^');
-        cout << "Arrow " << object << " is now switched to ^" << endl;
-    }
-    else if (dir_ == "down" && intro.isArrow(col, intro.getRows() - row + 1))
-    {
-        intro.setObject(col, intro.getRows() - row + 1, 'v');
-        cout << "Arrow " << object << " is now switched to v" << endl;
+        while (dir_ != "left" && dir_ != "right" && dir_ != "up" && dir_ != "down")
+        {
+            cout << "Invalid input, please enter a valid direction => ";
+            cin.clear();
+            dir_.clear();
+            cin.ignore(INT_MAX, '\n'); // to clear input buffer
+            cin >> dir_;
+        }
+        cout << endl;
+        // to find coordinates of the given values.
+        object = intro.getObject(col, intro.getRows() - row + 1);
+        if (dir_ == "left" && intro.isArrow(col, intro.getRows() - row + 1))
+        {
+            intro.setObject(col, intro.getRows() - row + 1, '<');
+            cout << "Arrow " << object << " is now switched to <" << endl;
+        }
+        else if (dir_ == "right" && intro.isArrow(col, intro.getRows() - row + 1))
+        {
+            intro.setObject(col, intro.getRows() - row + 1, '>');
+            cout << "Arrow " << object << " is now switched to >" << endl;
+        }
+        else if (dir_ == "up" && intro.isArrow(col, intro.getRows() - row + 1))
+        {
+            intro.setObject(col, intro.getRows() - row + 1, '^');
+            cout << "Arrow " << object << " is now switched to ^" << endl;
+        }
+        else if (dir_ == "down" && intro.isArrow(col, intro.getRows() - row + 1))
+        {
+            intro.setObject(col, intro.getRows() - row + 1, 'v');
+            cout << "Arrow " << object << " is now switched to v" << endl;
+        }
+        else
+        {
+            cout << "There are no arrows in that area." << endl;
+        }
     }
     else
-    {
-        cout << "There are no arrows in that area." << endl;
+    {intro.displayGame();
+    charAttri(intro);
+        cout << "Alien ran out of stamina." << endl;
+        dir_.clear();
+        pf::ClearScreen;
+       // pf::Pause;
+        
     }
 }
 
-Alien::Alien(int life, int attack, int range)
+Alien::Alien(int life, int attack, int range, int stamina)
 {
     life_ = life;
     attack_ = attack;
     range_ = range;
+    stamina_ = stamina;
 }
 
 void Alien::alienPos(Intro &intro)
