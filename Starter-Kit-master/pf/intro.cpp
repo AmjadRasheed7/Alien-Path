@@ -29,7 +29,7 @@ public:
     void displayIntro();
     void displayGame();
     void mapinit(int rows, int col, int zombie);
-    void newBoard(Intro &intro, int rows, int col, int zombie, bool changed);
+    void newBoard(Intro &intro, int rows, int col, int zombie, bool changed, int NUKE);
     void setObject(int col, int rows, char ch);
     int getRows() const;
     int getCol() const;
@@ -116,75 +116,83 @@ void Alien::loadGame(Intro &intro)
     cin >> filename;
     ifstream file(filename);
 
+    if (!file.is_open())
+    {
+        cerr << "Failed to open file for reading." << endl;
+        return;
+    }
+
     string line;
+    int rows = 0, col = 0, zombiess = 0;
+    std::vector<std::vector<char>> newMap;
     while (getline(file, line))
     {
-        int rows, col, zombiess;
-        if (line == "Board Rows: ")
+        if (line == "Game Settings")
         {
-            file >> rows;
-            intro.setRows(rows);
-            cout << "rows: " << rows << endl;
-            cout << intro.getRows();
-            pf::Pause();
+            file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
         }
-        else if (line == "Board Columns: ")
+        else if (line == "Board Rows")
         {
-            file >> col;
+            getline(file, line);
+            stringstream ss(line);
+            ss >> rows;
+            intro.setRows(rows);
+        }
+        else if (line == "Board Columns")
+        {
+            getline(file, line);
+            stringstream ss(line);
+            ss >> col;
             intro.setCol(col);
         }
-        else if (line == "Zombie Count: ")
+        else if (line == "Zombie Count")
         {
-            file >> zombiess;
+            getline(file, line);
+            stringstream ss(line);
+            ss >> zombiess;
             intro.setZombies(zombiess);
         }
-        else if (line == "Alien Col:")
+        else if (line == "Alien settings")
         {
-            file >> x_;
-        }
-        else if (line == "Alien Row:")
-        {
-            file >> y_;
-        }
-        else if (line == "Alien Life:")
-        {
-            file >> life_;
-        }
-        else if (line == "Alien Attack:")
-        {
-            file >> attack_;
-        }
-        else if (line == "Zombie settings:")
-        {
-            for (int i = 0; i < intro.getZombie(); i++)
+            file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
+            while (getline(file, line))
             {
-                if (line == "Zombie ")
+                if(line == "Alien Col")
                 {
-                    file >> zombies[i];
+                    file >> x_;
                 }
-                else if (line == "Life:")
+                else if (line == "Alien Row")
                 {
-                    file >> random_life[i];
+                    file >> y_;
                 }
-
-                else if (line == "Attack:")
+                else if (line == "Alien Life")
                 {
-                    file >> random_attack[i];
+                    file >> life_;
                 }
-                else if (line == "Range:")
+                else if (line == "Alien Attack")
                 {
-                    file >> random_range[i];
-                }
-                else if (line == "Col:")
-                {
-                    file >> zombieCoordX[i];
-                }
-                else if (line == "Row:")
-                {
-                    file >> zombieCoordY[i];
+                    file >> attack_;
                 }
             }
         }
+        else if (line == "Zombie stats") {
+            pf::Pause();
+        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
+            for (int i = 1; i <= intro.getZombie(); i++)
+            {
+                string zombie_name = "Zombie " + to_string(i);
+                int life, range, attack, col, row;
+                getline(file, line);
+                stringstream ss(line);
+                ss >> life >> attack >> range >> col >> row;
+                random_life[i] = life;
+                random_attack[i] = attack;
+                random_range[i] = range;
+                zombieCoordX[i] = col;
+                zombieCoordY[i] = row;
+                pf::Pause();
+            }
+            }
         else if (line == "Map data")
         {
             file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
@@ -207,7 +215,8 @@ void Alien::loadGame(Intro &intro)
                     }
                 }
             }
-
+            cout << "Rows: " << rows << " Col: " << col;
+            pf::Pause();
             intro.setMap(newMap);
         }
     }
@@ -219,7 +228,7 @@ void Alien::loadGame(Intro &intro)
 
 void Alien::saveGame(Intro &intro)
 {
-    cout << "Enter  the rile name to save your progress => ";
+    cout << "Enter  the file name to save your progress => ";
 
     cin >> dir_;
     ofstream file(dir_);
@@ -232,27 +241,35 @@ void Alien::saveGame(Intro &intro)
     {
         file << "Game settings" << endl;
         file << "--------------" << endl;
-        file << "Board Rows: " << intro.getRows() << endl;
-        file << "Board Columns: " << intro.getCol() << endl;
-        file << "Zombie Count: " << intro.getZombie() << endl;
+        file << "Board Rows" << endl;
+        file << intro.getRows() << endl;
+        file << "Board Columns" << endl;
+        file << intro.getCol() << endl;
+        file << "Zombie Count" << endl;
+        file << intro.getZombie() << endl;
 
-        file << endl;
 
         file << "Alien settings" << endl;
         file << "--------------" << endl;
-        file << "Alien Col: " << newAlienPosX(intro) << endl;
-        file << "Alien Row: " << newAlienPosY(intro) << endl;
-        file << "Alien Life: " << life_ << endl;
-        file << "Alien Attack: " << attack_ << endl;
-        file << endl;
+        file << "Alien Col" << endl;
+        file << newAlienPosX(intro) << endl;
+        file << "Alien Row" << endl;
+        file << newAlienPosY(intro) << endl;
+        file << "Alien Life" << endl;
+        file << life_ << endl;
+        file << "Alien Attack" << endl;
+        file << attack_ << endl;
 
-        file << "Zombie settings: " << endl;
+        file << "Zombie stats" << endl;
+        file << "--------------" << endl;
         for (int i = 0; i < intro.getZombie(); i++)
         {
-            file << "Zombie " << zombies[i] << " Life: " << random_life[i] << ", Attack: " << random_attack[i] << ", Range: " << random_range[i] << endl;
-            file << "Zombie " << zombies[i] << " Col: " << zombieCoordX[i] << endl;
-            file << "Zombie " << zombies[i] << " Row: " << zombieCoordY[i] << endl;
-            file << endl;
+            file << "Zombie " << i + 1 << endl;
+            file << random_life[i] << endl;
+            file << random_attack[i] << endl;
+            file << random_range[i] << endl;
+            file << zombieCoordX[i] << endl;
+            file << zombieCoordY[i] << endl;
         }
 
         file << "Map data" << endl;
@@ -499,77 +516,13 @@ void Alien::closestZombie(Intro &intro)
 
 void Alien::hitZombie(Intro &intro, int x, int y)
 {
-    if (intro.getObject(x, y) == '1')
-    {
-        random_life[0] -= attack_;
-        // to make sure the zombies dont get negative life
-        if (random_life[0] <= 0)
-        {
-            random_life[0] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '2')
-    {
-        random_life[1] -= attack_;
-        if (random_life[1] <= 0)
-        {
-            random_life[1] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '3')
-    {
-        random_life[2] -= attack_;
-        if (random_life[2] <= 0)
-        {
-            random_life[2] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '4')
-    {
-        random_life[3] -= attack_;
-        if (random_life[3] <= 0)
-        {
-            random_life[3] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '5')
-    {
-        random_life[4] -= attack_;
-        if (random_life[4] <= 0)
-        {
-            random_life[4] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '6')
-    {
-        random_life[5] -= attack_;
-        if (random_life[5] <= 0)
-        {
-            random_life[5] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '7')
-    {
-        random_life[6] -= attack_;
-        if (random_life[6] <= 0)
-        {
-            random_life[6] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '8')
-    {
-        random_life[7] -= attack_;
-        if (random_life[7] <= 0)
-        {
-            random_life[7] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '9')
-    {
-        random_life[8] -= attack_;
-        if (random_life[8] <= 0)
-        {
-            random_life[8] = 0;
+    for(int i = 0; i < intro.getZombie(); i++){
+        if(intro.getObject(x, y) == zombies[i]){
+            random_life[i] -= attack_;
+            if(random_life[i] <=0){
+                random_life[i] = 0;
+            }
+            break;
         }
     }
 }
@@ -1090,6 +1043,8 @@ void Alien::showHelp(Intro &intro)
          << "              - Quit the game." << endl;
     cout << "10. new "
          << "              - Start a new game." << endl;
+         cout << "11. nuke "
+         << "              - Nuke all zombies in the map." << endl;
 }
 
 void Alien::zombiePos(Intro &intro)
@@ -1847,6 +1802,9 @@ void Alien::move(Intro &intro)
             for (int i = 0; i < intro.getZombie(); i++)
             {
                 random_life[i] -= 50;
+                if(random_life[i] <= 0){
+                    random_life[i] = 0;
+                }
             }
 
             intro.NUKE_--;
@@ -1856,6 +1814,8 @@ void Alien::move(Intro &intro)
             pf::Pause();
             pf::ClearScreen();
             dir_.clear();
+            deadZombie(intro);
+            zombieTurn = true;
         }
         else
         {
@@ -2090,9 +2050,10 @@ void Intro::setZombies(int zombiess)
     zombie_ = zombiess;
 }
 
-void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
+void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed, int NUKE)
 {
     changed_ = true;
+    NUKE_ = NUKE;
     Alien alien;
     int n = 0;
     // to make sure the objects in the map does not change every alien movement.
@@ -2472,5 +2433,5 @@ void Intro::changeSettings()
     pf::Pause();
     pf::ClearScreen();
     changed_ = true;
-    intro.newBoard(intro, rows_, col_, zombie_, changed_);
+    intro.newBoard(intro, rows_, col_, zombie_, changed_, NUKE_);
 }
