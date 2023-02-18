@@ -14,15 +14,17 @@ using namespace std;
 
 class Intro
 {
+    friend class Alien;
+
 private:
     string choice_;
-    int rows_, col_, zombie_;
+    int rows_, col_, zombie_, NUKE_;
     bool changed_;
     vector<vector<char>> map_;
 
 public:
     int rows, col, zombie;
-    Intro(int rows = 5, int col = 9, int zombie = 1, string choice = "", bool changed = false);
+    Intro(int rows = 5, int col = 9, int zombie = 1, int NUKE = 1, string choice = "", bool changed = false);
     void changeSettings();
     void displayIntro();
     void displayGame();
@@ -48,6 +50,8 @@ public:
     void setRows(int row);
     void setCol(int col);
     void setZombies(int zombiess);
+    bool isNUKE();
+    int getNUKE() const;
 };
 
 class Alien
@@ -154,30 +158,30 @@ void Alien::loadGame(Intro &intro)
         {
             for (int i = 0; i < intro.getZombie(); i++)
             {
-                if(line == "Zombie "){
-                file >> zombies[i];
-
-            
+                if (line == "Zombie ")
+                {
+                    file >> zombies[i];
                 }
-                else if(line == "Life:"){
+                else if (line == "Life:")
+                {
                     file >> random_life[i];
                 }
 
-                else if(line =="Attack:"){
-                file >> random_attack[i];
-
+                else if (line == "Attack:")
+                {
+                    file >> random_attack[i];
                 }
-                else if(line == "Range:"){
-                file >> random_range[i];
-
+                else if (line == "Range:")
+                {
+                    file >> random_range[i];
                 }
-                else if(line == "Col:"){
-                file >> zombieCoordX[i];
-
+                else if (line == "Col:")
+                {
+                    file >> zombieCoordX[i];
                 }
-                else if(line == "Row:"){
-                file >> zombieCoordY[i];
-
+                else if (line == "Row:")
+                {
+                    file >> zombieCoordY[i];
                 }
             }
         }
@@ -215,7 +219,7 @@ void Alien::loadGame(Intro &intro)
 
 void Alien::saveGame(Intro &intro)
 {
-    cout << "Enter  the file name to save your progress => ";
+    cout << "Enter  the rile name to save your progress => ";
 
     cin >> dir_;
     ofstream file(dir_);
@@ -1084,6 +1088,8 @@ void Alien::showHelp(Intro &intro)
          << "              - Load a game." << endl;
     cout << "9. quit "
          << "              - Quit the game." << endl;
+    cout << "10. new "
+         << "              - Start a new game." << endl;
 }
 
 void Alien::zombiePos(Intro &intro)
@@ -1634,6 +1640,8 @@ void Alien::moveDown(Intro &intro)
 
 void Alien::charAttri(Intro &intro)
 {
+    cout << setw(7) << "Nuke" 
+         << " " << intro.getNUKE() << endl;
     cout << setw(9) << "Alien "
          << "   : Life " << life_ << " attack " << attack_ << endl;
     for (int i = 0; i <= intro.getZombie() - 1; i++)
@@ -1805,6 +1813,7 @@ void Alien::move(Intro &intro)
             intro.displayGame();
             charAttri(intro);
         }
+
         else
         {
             while (true)
@@ -1825,6 +1834,84 @@ void Alien::move(Intro &intro)
                 else if (dir_ == "n")
                 {
                     cout << "You may continue." << endl;
+
+                    break;
+                }
+            }
+        }
+    }
+    else if (dir_ == "nuke")
+    {
+        if (intro.isNUKE())
+        {
+            for (int i = 0; i < intro.getZombie(); i++)
+            {
+                random_life[i] -= 50;
+            }
+
+            intro.NUKE_--;
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Zombies are hit with a nuke! " << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            dir_.clear();
+        }
+        else
+        {
+
+            intro.displayGame();
+            charAttri(intro);
+            cout << "There are no nukes left. " << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            dir_.clear();
+        }
+    }
+    else if (dir_ == "new")
+    {
+        dir_.clear();
+        cout << "Are you sure you want to start a new game? (y/n) => ";
+        cin >> dir_;
+        transform(dir_.begin(), dir_.end(), dir_.begin(), ::tolower);
+        cout << endl;
+        if (dir_ == "y")
+        {
+            
+            pf::Pause();
+            pf::ClearScreen();
+            dir_.clear();
+            resetGame(intro);
+        }
+        else if (dir_ == "n")
+        {
+            cout << "You may continue." << endl;
+            dir_.clear();
+            pf::Pause();
+            pf::ClearScreen();
+            intro.displayGame();
+            charAttri(intro);
+        }
+        else
+        {
+            while (true)
+            {
+                cout << "Please enter a valid input. (y/n) => ";
+                dir_.clear();
+                cin >> dir_;
+                transform(dir_.begin(), dir_.end(), dir_.begin(), ::tolower);
+                cout << endl;
+                if (dir_ == "y")
+                {
+                    cout << "See you next time!" << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    dir_.clear();
+                    resetGame(intro);
+                }
+                else if (dir_ == "n")
+                {
+                    cout << "You may continue." << endl;
                     dir_.clear();
                     pf::Pause();
                     pf::ClearScreen();
@@ -1835,6 +1922,7 @@ void Alien::move(Intro &intro)
             }
         }
     }
+
     else
     {
         intro.displayGame();
@@ -2069,12 +2157,26 @@ bool Intro::isRock(int x, int y)
 {
     return map_[rows_ - y][x - 1] == 'r';
 }
+bool Intro::isNUKE()
+{
+    if (NUKE_ > 0)
+    {
+        return true;
+    }
 
+    else
+    {
+        return false;
+    }
+}
 bool Intro::isPod(int x, int y)
 {
     return map_[rows_ - y][x - 1] == 'p';
 }
-
+int Intro::getNUKE() const
+{
+    return NUKE_;
+}
 bool Intro::getChanged() const
 {
     return changed_;
@@ -2095,6 +2197,7 @@ void Intro::init()
     rows_ = 5;
     col_ = 9;
     zombie_ = 1;
+    NUKE_ = 1;
     changed_ = false;
     choice_ = "";
 }
@@ -2155,11 +2258,12 @@ void Intro::mapinit(int rows, int col, int zombie)
     }
 }
 
-Intro::Intro(int rows, int col, int zombie, string choice, bool changed)
+Intro::Intro(int rows, int col, int zombie, int NUKE, string choice, bool changed)
 {
     rows_ = rows;
     col_ = col;
     zombie_ = zombie;
+    NUKE_ = NUKE;
     choice_ = choice;
     changed_ = changed;
     mapinit(rows, col, zombie);
@@ -2254,6 +2358,13 @@ void Intro::displayIntro()
     cout.width(3);
     cout << zombie_ << endl;
 
+    cout.width(5);
+    cout << "Number of nukes ";
+    cout.width(1);
+    cout << ":";
+    cout.width(3);
+    cout << NUKE_ << endl;
+
     while (true)
     {
 
@@ -2342,6 +2453,17 @@ void Intro::changeSettings()
     while (!(cin >> zombie_) || (zombie_ <= 0) || (zombie_ >= 10))
     {
         cout << "Invalid input. Please enter an  integer value or greater than 0 => ";
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+    }
+    cout << endl;
+    cout << endl;
+    cout << "Additional Settings" << endl;
+    cout << "--------------------" << endl;
+    cout << "Enter the number of nukes => ";
+    while (!(cin >> NUKE_) || (NUKE_ < 0) || (NUKE_ >= 6))
+    {
+        cout << "Invalid input. The maximum number of nukes is 5 =>";
         cin.clear();
         cin.ignore(INT_MAX, '\n');
     }
