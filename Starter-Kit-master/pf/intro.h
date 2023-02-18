@@ -1,4 +1,3 @@
-#include "helper.h"
 #include <iostream>
 #include <climits>
 #include <vector>
@@ -6,17 +5,16 @@
 #include <array>
 #include <random>
 #include <ctime>
-#include <string>
+#include "helper.h"
 #include <algorithm>
 #include <cctype>
-#include <fstream>
-using namespace std;
 
+using namespace std;
 class Intro
 {
 private:
     string choice_;
-    int rows_, col_, zombie_, NUKE_;
+    int rows_, col_, zombie_;
     bool changed_;
     vector<vector<char>> map_;
 
@@ -27,7 +25,7 @@ public:
     void displayIntro();
     void displayGame();
     void mapinit(int rows, int col, int zombie);
-    void newBoard(Intro &intro, int rows, int col, int zombie, bool changed);
+    void newBoard(Intro &intro, int rows, int col, int zombie, bool changed, int NUKE);
     void setObject(int col, int rows, char ch);
     int getRows() const;
     int getCol() const;
