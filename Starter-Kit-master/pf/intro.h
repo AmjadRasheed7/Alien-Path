@@ -1,3 +1,4 @@
+#include "helper.h"
 #include <iostream>
 #include <climits>
 #include <vector>
@@ -5,16 +6,19 @@
 #include <array>
 #include <random>
 #include <ctime>
-#include "helper.h"
+#include <string>
 #include <algorithm>
 #include <cctype>
-
+#include <fstream>
 using namespace std;
+
 class Intro
 {
+    friend class Alien;
+
 private:
     string choice_;
-    int rows_, col_, zombie_;
+    int rows_, col_, zombie_, NUKE_;
     bool changed_;
     vector<vector<char>> map_;
 
@@ -53,7 +57,7 @@ public:
 class Alien
 {
 private:
-    int life_, attack_, range_, x_, y_, zombie2_;
+    int life_, attack_, range_, x_, y_, zombie2_, stamina_;
     bool redir_;
     char alien_; // 'A'
     string dir_; // up, down, left, right and other commands
@@ -69,7 +73,7 @@ private:
     int count = 0;
 
 public:
-    Alien(int life = 100, int attack = 0, int range = 0);
+    Alien(int life = 100, int attack = 0, int range = 0, int stamina = 10);
     void alienPos(Intro &intro);
     void move(Intro &intro);
     void alienDisplay(Intro &intro, Alien &alien);
