@@ -190,15 +190,13 @@ void Alien::loadGame(Intro &intro)
                 random_range[i] = range;
                 zombieCoordX[i] = col;
                 zombieCoordY[i] = row;
-                pf::Pause();
             }
             }
         else if (line == "Map data")
         {
             file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
 
-            std::vector<std::vector<char>> newMap(intro.getRows(), std::vector<char>(intro.getCol()));
-
+            newMap.resize(intro.getRows(), std::vector<char>(intro.getCol()));
             for (int i = 0; i < intro.getRows(); i++)
             {
                 for (int j = 0; j < intro.getCol(); j++)
@@ -222,7 +220,6 @@ void Alien::loadGame(Intro &intro)
     }
 
     file.close();
-
     cout << "Game data loaded from file.\n";
 }
 
@@ -259,6 +256,7 @@ void Alien::saveGame(Intro &intro)
         file << life_ << endl;
         file << "Alien Attack" << endl;
         file << attack_ << endl;
+        file << endl;
 
         file << "Zombie stats" << endl;
         file << "--------------" << endl;
@@ -271,6 +269,7 @@ void Alien::saveGame(Intro &intro)
             file << zombieCoordX[i] << endl;
             file << zombieCoordY[i] << endl;
         }
+        file << endl;
 
         file << "Map data" << endl;
         file << "--------------" << endl;
@@ -295,8 +294,16 @@ void Alien::saveGame(Intro &intro)
 
 void Alien::resetGame(Intro &intro)
 {
+    zombies.clear();
+    zombies = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    intro.setZombie(0);
+    x_ = 0;
+    y_ = 0;
     zombieCoordX.clear();
     zombieCoordY.clear();
+    random_life.clear();
+    random_range.clear();
+    random_attack.clear();
     intro.init();
     intro.mapinit(intro.getRows(), intro.getCol(), intro.getZombie());
     randomAttri(intro);
@@ -1806,6 +1813,7 @@ void Alien::move(Intro &intro)
                 random_life[i] -= 50;
                 if(random_life[i] <= 0){
                     random_life[i] = 0;
+                    deadZombie(intro);
                 }
             }
 
@@ -1816,7 +1824,6 @@ void Alien::move(Intro &intro)
             pf::Pause();
             pf::ClearScreen();
             dir_.clear();
-            deadZombie(intro);
             zombieTurn = true;
         }
         else
@@ -1870,6 +1877,7 @@ void Alien::move(Intro &intro)
                     pf::ClearScreen();
                     dir_.clear();
                     resetGame(intro);
+                    break;
                 }
                 else if (dir_ == "n")
                 {
