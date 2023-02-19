@@ -8,8 +8,6 @@ Please provide the YouTube link to your [Video Demo](https://youtube.com).
 
 ### Completed
 
-List all the features completed.
-
 1. Modified alien movements.
 2. Alien now stops after countering a rock or a border before it.
 3. Updated the map.
@@ -32,7 +30,9 @@ List all the features completed.
 
 ## Additional Features
 
-Describe the additional features that has been implemented.
+1. Nuke command: Hitting every zombie in the map with a damage of 50.
+2. New command: Restarting the game with a new randomly generated objects and coordinates.
+3. Added stamina: Alien have 5 stamina and it depletes by one, everytime the alien changes the direction of an arrow.
 
 ## Contributions
 
