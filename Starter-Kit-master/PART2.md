@@ -62,6 +62,12 @@ List down the contribution of each group members.
 1. Fixed error regarding change settings input.
 2. Implemented generate a random map each playthrough.
 3. Added attribute output.
+4. Added randomly generated error.
+5. Add Nuke feature.
+6. Add Stamina feature.
+7. Add new game command.
+8. Worked on zombie movement.
+9. updated help command.
 
 ## Problems Encountered & Solutions
 1. The issue with the zombie not attacking the alien within range was due to the fact that the zombie was only checking on one block instead of all the blocks within the range. The solution was to modify the code to make the zombie check all blocks within the range.
