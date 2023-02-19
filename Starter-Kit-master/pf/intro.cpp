@@ -14,20 +14,22 @@ using namespace std;
 
 class Intro
 {
+    friend class Alien;
+
 private:
     string choice_;
-    int rows_, col_, zombie_;
+    int rows_, col_, zombie_, NUKE_;
     bool changed_;
     vector<vector<char>> map_;
 
 public:
     int rows, col, zombie;
-    Intro(int rows = 5, int col = 9, int zombie = 1, string choice = "", bool changed = false);
+    Intro(int rows = 5, int col = 9, int zombie = 1, int NUKE = 1, string choice = "", bool changed = false);
     void changeSettings();
     void displayIntro();
     void displayGame();
     void mapinit(int rows, int col, int zombie);
-    void newBoard(Intro &intro, int rows, int col, int zombie, bool changed);
+    void newBoard(Intro &intro, int rows, int col, int zombie, bool changed, int NUKE);
     void setObject(int col, int rows, char ch);
     int getRows() const;
     int getCol() const;
@@ -45,9 +47,11 @@ public:
     void init();
     vector<vector<char>> getMap();
     void setMap(const vector<vector<char>> &newMap);
-    void setRows(int &row);
-    void setCol(int &col);
-    void setZombies(int &zombiess);
+    void setRows(int row);
+    void setCol(int col);
+    void setZombies(int zombiess);
+    bool isNUKE();
+    int getNUKE() const;
 };
 
 class Alien
@@ -103,7 +107,6 @@ public:
     void resetGame(Intro &intro);
     void saveGame(Intro &intro);
     void loadGame(Intro &intro);
-    
 };
 
 void Alien::loadGame(Intro &intro)
@@ -172,33 +175,24 @@ void Alien::loadGame(Intro &intro)
                 }
             }
         }
-         if (line == "Zombie settings") {
+        else if (line == "Zombie stats") {
             pf::Pause();
-            // Ignore the line containing "--------------"
-            std::getline(file, line);
-
-            // Read the zombie data
-            for (int i = 0; i < zombiess; i++) {
-                // Read the zombie number
-                std::getline(file, line);
-                int zombieNum = std::stoi(line.substr(7));
-
-                // Read the zombie life, attack, range, and position
-                int life, attack, range, x, y;
-                file >> life >> attack >> range >> x >> y;
-
-                // Add the zombie to the appropriate data structures
-                zombies.push_back(zombieNum);
-                random_life.push_back(life);
-                random_attack.push_back(attack);
-                random_range.push_back(range);
-                zombieCoordX.push_back(x);
-                zombieCoordY.push_back(y);
-
-                // Ignore the newline character after the zombie data
-                std::getline(file, line);
+        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
+            for (int i = 1; i <= intro.getZombie(); i++)
+            {
+                string zombie_name = "Zombie " + to_string(i);
+                int life, range, attack, col, row;
+                getline(file, line);
+                stringstream ss(line);
+                ss >> life >> attack >> range >> col >> row;
+                random_life[i] = life;
+                random_attack[i] = attack;
+                random_range[i] = range;
+                zombieCoordX[i] = col;
+                zombieCoordY[i] = row;
+                pf::Pause();
             }
-        }
+            }
         else if (line == "Map data")
         {
             file.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore "--------------" line
@@ -254,7 +248,6 @@ void Alien::saveGame(Intro &intro)
         file << "Zombie Count" << endl;
         file << intro.getZombie() << endl;
 
-        file << endl;
 
         file << "Alien settings" << endl;
         file << "--------------" << endl;
@@ -266,9 +259,8 @@ void Alien::saveGame(Intro &intro)
         file << life_ << endl;
         file << "Alien Attack" << endl;
         file << attack_ << endl;
-        file << endl;
 
-        file << "Zombie settings" << endl;
+        file << "Zombie stats" << endl;
         file << "--------------" << endl;
         for (int i = 0; i < intro.getZombie(); i++)
         {
@@ -278,9 +270,7 @@ void Alien::saveGame(Intro &intro)
             file << random_range[i] << endl;
             file << zombieCoordX[i] << endl;
             file << zombieCoordY[i] << endl;
-            file << endl;
         }
-        file << endl;
 
         file << "Map data" << endl;
         file << "--------------" << endl;
@@ -305,6 +295,8 @@ void Alien::saveGame(Intro &intro)
 
 void Alien::resetGame(Intro &intro)
 {
+    zombieCoordX.clear();
+    zombieCoordY.clear();
     intro.init();
     intro.mapinit(intro.getRows(), intro.getCol(), intro.getZombie());
     randomAttri(intro);
@@ -399,7 +391,7 @@ void Alien::zombieAttack(Intro &intro, char zombies, int zombieCoordX, int zombi
             pf::ClearScreen();
             break;
         }
-        else if (zombieCoordY - j >= 0 && intro.getObject(zombieCoordX, zombieCoordY - j) == 'A')
+        else if (zombieCoordY - j > 0 && intro.getObject(zombieCoordX, zombieCoordY - j) == 'A')
         {
             life_ -= random_attack;
             if (life_ < 0)
@@ -429,7 +421,7 @@ void Alien::zombieAttack(Intro &intro, char zombies, int zombieCoordX, int zombi
             pf::ClearScreen();
             break;
         }
-        else if (zombieCoordX - j >= 0 && intro.getObject(zombieCoordX - j, zombieCoordY) == 'A')
+        else if (zombieCoordX - j > 0 && intro.getObject(zombieCoordX - j, zombieCoordY) == 'A')
         {
             life_ -= random_attack;
             if (life_ < 0)
@@ -526,77 +518,13 @@ void Alien::closestZombie(Intro &intro)
 
 void Alien::hitZombie(Intro &intro, int x, int y)
 {
-    if (intro.getObject(x, y) == '1')
-    {
-        random_life[0] -= attack_;
-        // to make sure the zombies dont get negative life
-        if (random_life[0] <= 0)
-        {
-            random_life[0] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '2')
-    {
-        random_life[1] -= attack_;
-        if (random_life[1] <= 0)
-        {
-            random_life[1] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '3')
-    {
-        random_life[2] -= attack_;
-        if (random_life[2] <= 0)
-        {
-            random_life[2] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '4')
-    {
-        random_life[3] -= attack_;
-        if (random_life[3] <= 0)
-        {
-            random_life[3] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '5')
-    {
-        random_life[4] -= attack_;
-        if (random_life[4] <= 0)
-        {
-            random_life[4] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '6')
-    {
-        random_life[5] -= attack_;
-        if (random_life[5] <= 0)
-        {
-            random_life[5] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '7')
-    {
-        random_life[6] -= attack_;
-        if (random_life[6] <= 0)
-        {
-            random_life[6] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '8')
-    {
-        random_life[7] -= attack_;
-        if (random_life[7] <= 0)
-        {
-            random_life[7] = 0;
-        }
-    }
-    else if (intro.getObject(x, y) == '9')
-    {
-        random_life[8] -= attack_;
-        if (random_life[8] <= 0)
-        {
-            random_life[8] = 0;
+    for(int i = 0; i < intro.getZombie(); i++){
+        if(intro.getObject(x, y) == zombies[i]){
+            random_life[i] -= attack_;
+            if(random_life[i] <=0){
+                random_life[i] = 0;
+            }
+            break;
         }
     }
 }
@@ -621,7 +549,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         //  if below is avaibale, zombie moves down
-        else if (zombieCoordY[i] - 1 >= 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == 'r')
+        else if (zombieCoordY[i] - 1 > 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == 'r')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordY[i]--;
@@ -651,7 +579,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         // if left is avaiable, zombie moves left.
-        else if (zombieCoordX[i] - 1 >= 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == 'r')
+        else if (zombieCoordX[i] - 1 > 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == 'r')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordX[i]--;
@@ -680,7 +608,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         //  if below is avaibale, zombie moves down
-        else if (zombieCoordY[i] - 1 >= 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == 'h')
+        else if (zombieCoordY[i] - 1 > 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == 'h')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordY[i]--;
@@ -710,7 +638,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         // if left is avaiable, zombie moves left.
-        else if (zombieCoordX[i] - 1 >= 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == 'h')
+        else if (zombieCoordX[i] - 1 > 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == 'h')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordX[i]--;
@@ -739,7 +667,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         //  if below is avaibale, zombie moves down
-        else if (zombieCoordY[i] - 1 >= 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == 'p')
+        else if (zombieCoordY[i] - 1 > 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == 'p')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordY[i]--;
@@ -769,7 +697,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         // if left is avaiable, zombie moves left.
-        else if (zombieCoordX[i] - 1 >= 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == 'p')
+        else if (zombieCoordX[i] - 1 > 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == 'p')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordX[i]--;
@@ -798,7 +726,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         //  if below is avaibale, zombie moves down
-        else if (zombieCoordY[i] - 1 >= 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '<')
+        else if (zombieCoordY[i] - 1 > 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '<')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordY[i]--;
@@ -828,7 +756,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         // if left is avaiable, zombie moves left.
-        else if (zombieCoordX[i] - 1 >= 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '<')
+        else if (zombieCoordX[i] - 1 > 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '<')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordX[i]--;
@@ -857,7 +785,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         //  if below is avaibale, zombie moves down
-        else if (zombieCoordY[i] - 1 >= 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '>')
+        else if (zombieCoordY[i] - 1 > 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '>')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordY[i]--;
@@ -887,7 +815,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         // if left is avaiable, zombie moves left.
-        else if (zombieCoordX[i] - 1 >= 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '>')
+        else if (zombieCoordX[i] - 1 > 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '>')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordX[i]--;
@@ -916,7 +844,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         //  if below is avaibale, zombie moves down
-        else if (zombieCoordY[i] - 1 >= 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == 'v')
+        else if (zombieCoordY[i] - 1 > 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == 'v')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordY[i]--;
@@ -946,7 +874,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         // if left is avaiable, zombie moves left.
-        else if (zombieCoordX[i] - 1 >= 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == 'v')
+        else if (zombieCoordX[i] - 1 > 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == 'v')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordX[i]--;
@@ -975,7 +903,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         //  if below is avaibale, zombie moves down
-        else if (zombieCoordY[i] - 1 >= 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '^')
+        else if (zombieCoordY[i] - 1 > 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == '^')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordY[i]--;
@@ -1005,7 +933,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         // if left is avaiable, zombie moves left.
-        else if (zombieCoordX[i] - 1 >= 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '^')
+        else if (zombieCoordX[i] - 1 > 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == '^')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordX[i]--;
@@ -1034,7 +962,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         //  if below is avaibale, zombie moves down
-        else if (zombieCoordY[i] - 1 >= 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == ' ')
+        else if (zombieCoordY[i] - 1 > 0 && intro.getObject(zombieCoordX[i], zombieCoordY[i] - 1) == ' ')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordY[i]--;
@@ -1064,7 +992,7 @@ void Alien::zombieMove(Intro &intro)
             continue;
         }
         // if left is avaiable, zombie moves left.
-        else if (zombieCoordX[i] - 1 >= 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == ' ')
+        else if (zombieCoordX[i] - 1 > 0 && intro.getObject(zombieCoordX[i] - 1, zombieCoordY[i]) == ' ')
         {
             intro.setObject(zombieCoordX[i], zombieCoordY[i], ' ');
             zombieCoordX[i]--;
@@ -1115,6 +1043,10 @@ void Alien::showHelp(Intro &intro)
          << "              - Load a game." << endl;
     cout << "9. quit "
          << "              - Quit the game." << endl;
+    cout << "10. new "
+         << "              - Start a new game." << endl;
+         cout << "11. nuke "
+         << "              - Nuke all zombies in the map." << endl;
 }
 
 void Alien::zombiePos(Intro &intro)
@@ -1665,6 +1597,8 @@ void Alien::moveDown(Intro &intro)
 
 void Alien::charAttri(Intro &intro)
 {
+    cout << setw(7) << "Nuke" 
+         << " " << intro.getNUKE() << endl;
     cout << setw(9) << "Alien "
          << "   : Life " << life_ << " attack " << attack_ << endl;
     for (int i = 0; i <= intro.getZombie() - 1; i++)
@@ -1836,6 +1770,7 @@ void Alien::move(Intro &intro)
             intro.displayGame();
             charAttri(intro);
         }
+
         else
         {
             while (true)
@@ -1856,6 +1791,89 @@ void Alien::move(Intro &intro)
                 else if (dir_ == "n")
                 {
                     cout << "You may continue." << endl;
+
+                    break;
+                }
+            }
+        }
+    }
+    else if (dir_ == "nuke")
+    {
+        if (intro.isNUKE())
+        {
+            for (int i = 0; i < intro.getZombie(); i++)
+            {
+                random_life[i] -= 50;
+                if(random_life[i] <= 0){
+                    random_life[i] = 0;
+                }
+            }
+
+            intro.NUKE_--;
+            intro.displayGame();
+            charAttri(intro);
+            cout << "Zombies are hit with a nuke! " << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            dir_.clear();
+            deadZombie(intro);
+            zombieTurn = true;
+        }
+        else
+        {
+
+            intro.displayGame();
+            charAttri(intro);
+            cout << "There are no nukes left. " << endl;
+            pf::Pause();
+            pf::ClearScreen();
+            dir_.clear();
+        }
+    }
+    else if (dir_ == "new")
+    {
+        dir_.clear();
+        cout << "Are you sure you want to start a new game? (y/n) => ";
+        cin >> dir_;
+        transform(dir_.begin(), dir_.end(), dir_.begin(), ::tolower);
+        cout << endl;
+        if (dir_ == "y")
+        {
+            
+            pf::Pause();
+            pf::ClearScreen();
+            dir_.clear();
+            resetGame(intro);
+        }
+        else if (dir_ == "n")
+        {
+            cout << "You may continue." << endl;
+            dir_.clear();
+            pf::Pause();
+            pf::ClearScreen();
+            intro.displayGame();
+            charAttri(intro);
+        }
+        else
+        {
+            while (true)
+            {
+                cout << "Please enter a valid input. (y/n) => ";
+                dir_.clear();
+                cin >> dir_;
+                transform(dir_.begin(), dir_.end(), dir_.begin(), ::tolower);
+                cout << endl;
+                if (dir_ == "y")
+                {
+                    cout << "See you next time!" << endl;
+                    pf::Pause();
+                    pf::ClearScreen();
+                    dir_.clear();
+                    resetGame(intro);
+                }
+                else if (dir_ == "n")
+                {
+                    cout << "You may continue." << endl;
                     dir_.clear();
                     pf::Pause();
                     pf::ClearScreen();
@@ -1866,6 +1884,7 @@ void Alien::move(Intro &intro)
             }
         }
     }
+
     else
     {
         intro.displayGame();
@@ -2018,24 +2037,25 @@ bool Intro::isZombie(int x, int y)
     }
 }
 
-void Intro::setCol(int &col)
+void Intro::setCol(int col)
 {
     col_ = col;
 }
 
-void Intro::setRows(int &row)
+void Intro::setRows(int row)
 {
     rows_ = row;
 }
 
-void Intro::setZombies(int &zombiess)
+void Intro::setZombies(int zombiess)
 {
     zombie_ = zombiess;
 }
 
-void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed)
+void Intro::newBoard(Intro &intro, int rows, int col, int zombie, bool changed, int NUKE)
 {
     changed_ = true;
+    NUKE_ = NUKE;
     Alien alien;
     int n = 0;
     // to make sure the objects in the map does not change every alien movement.
@@ -2100,12 +2120,26 @@ bool Intro::isRock(int x, int y)
 {
     return map_[rows_ - y][x - 1] == 'r';
 }
+bool Intro::isNUKE()
+{
+    if (NUKE_ > 0)
+    {
+        return true;
+    }
 
+    else
+    {
+        return false;
+    }
+}
 bool Intro::isPod(int x, int y)
 {
     return map_[rows_ - y][x - 1] == 'p';
 }
-
+int Intro::getNUKE() const
+{
+    return NUKE_;
+}
 bool Intro::getChanged() const
 {
     return changed_;
@@ -2126,6 +2160,7 @@ void Intro::init()
     rows_ = 5;
     col_ = 9;
     zombie_ = 1;
+    NUKE_ = 1;
     changed_ = false;
     choice_ = "";
 }
@@ -2186,11 +2221,12 @@ void Intro::mapinit(int rows, int col, int zombie)
     }
 }
 
-Intro::Intro(int rows, int col, int zombie, string choice, bool changed)
+Intro::Intro(int rows, int col, int zombie, int NUKE, string choice, bool changed)
 {
     rows_ = rows;
     col_ = col;
     zombie_ = zombie;
+    NUKE_ = NUKE;
     choice_ = choice;
     changed_ = changed;
     mapinit(rows, col, zombie);
@@ -2285,6 +2321,13 @@ void Intro::displayIntro()
     cout.width(3);
     cout << zombie_ << endl;
 
+    cout.width(5);
+    cout << "Number of nukes ";
+    cout.width(1);
+    cout << ":";
+    cout.width(3);
+    cout << NUKE_ << endl;
+
     while (true)
     {
 
@@ -2376,10 +2419,21 @@ void Intro::changeSettings()
         cin.clear();
         cin.ignore(INT_MAX, '\n');
     }
+    cout << endl;
+    cout << endl;
+    cout << "Additional Settings" << endl;
+    cout << "--------------------" << endl;
+    cout << "Enter the number of nukes => ";
+    while (!(cin >> NUKE_) || (NUKE_ < 0) || (NUKE_ >= 6))
+    {
+        cout << "Invalid input. The maximum number of nukes is 5 =>";
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+    }
 
     cout << "Settings updated" << endl;
     pf::Pause();
     pf::ClearScreen();
     changed_ = true;
-    intro.newBoard(intro, rows_, col_, zombie_, changed_);
+    intro.newBoard(intro, rows_, col_, zombie_, changed_, NUKE_);
 }
