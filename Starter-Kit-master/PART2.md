@@ -27,13 +27,8 @@ List all the features completed.
 15. Added arrow, help, quit commands.
 16. Alien wins if all zombies are dead, Alien loses if its life is = 0.
 17. Added play again after winning or losing.
+18. Added save and load commands.
 
-### To Do
-
-List all the features not yet done. Remove this section if there is no incomplete requirements.
-
-1. To make sure the zombies does not overwrite the alien.
-2. *add more*
 
 ## Additional Features
 
@@ -41,33 +36,40 @@ Describe the additional features that has been implemented.
 
 ## Contributions
 
-List down the contribution of each group members.
-
-
 ### Abdelrahman Mohamed Hassan Mohamed (1211305311)
 
-1. Created the default settings and board change settings.
-2. Added many error check to make sure the user does not close the program by mistyping.
-3. Participated in many error fixing, such as the board abnormality errors, alien movements and the new board errors, and many other errors.
+1. Added every objects in the game and programmed every objects.
+2. Fixed many zombie and alien movement bugs.
+3. Helped with alien movements
+4. Fixed updated map bugs.
+5. Helped with winning/losing feature.
+6. Tested and identified some bugs.
 
 ### Amgad Elrashid Gurashi Eltayeb (1211307882)
 
-1. Created the board and new boards.
-2. Implemented the alien movements.
-3. Randomly generate objects in the map.
-4. Fixed the new board, alien movement, map abnormality errors.
+1. Updated the map.
+2. Modified alien movement.
+3. Implemented save and load feature.
+4. Completed all zombie related functions including, movements, attack, dying and pushing them into the map. And fixing their errors, such as zombie moving out of map border.
+5. Added winning, losing, play again features
+6. Implemented trails generating random objects around the map.
+7. Added arrow command, allowing the user to redirect it to whatever way they desire.
+8. Fixed some of the bugs in Nuke feature.
+9. Fixed loading and saving errors.
+10. Added 'help' command.
+11. Fixed the pod object.
 
 ### Balchi Maher M.  N. (1221302826)
 
 1. Fixed error regarding change settings input.
-2. Implemented generate a random map each playthrough.
+2. Fixed generate a random map each playthrough.
 3. Added attribute output.
-4. Added randomly generated error.
-5. Add Nuke feature.
-6. Add Stamina feature.
-7. Add new game command.
-8. Worked on zombie movement.
-9. updated help command.
+4. Fixed randomly generated attribute error.
+5. Added Nuke feature.
+6. Added Stamina feature.
+7. Added 'new' game command.
+8. Worked on most parts of zombie movement.
+9. Updated help command.
 
 ## Problems Encountered & Solutions
 1. The issue with the zombie not attacking the alien within range was due to the fact that the zombie was only checking on one block instead of all the blocks within the range. The solution was to modify the code to make the zombie check all blocks within the range.
