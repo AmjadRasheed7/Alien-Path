@@ -43,23 +43,35 @@ Describe the additional features that has been implemented.
 
 List down the contribution of each group members.
 
-For example:
 
-### Tony Stark
+### Abdelrahman Mohamed Hassan Mohamed (1211305311)
 
-1. Randomly generate game board.
-2. *add more*
+1. Created the default settings and board change settings.
+2. Added many error check to make sure the user does not close the program by mistyping.
+3. Participated in many error fixing, such as the board abnormality errors, alien movements and the new board errors, and many other errors.
 
-### Steve Rogers
+### Amgad Elrashid Gurashi Eltayeb (1211307882)
 
-1. Zombie movement and attack behaviour.
-2. *add more*
+1. Created the board and new boards.
+2. Implemented the alien movements.
+3. Randomly generate objects in the map.
+4. Fixed the new board, alien movement, map abnormality errors.
 
-### Dr. Strange
+### Balchi Maher M.  N. (1221302826)
 
-1. Implement all game objects.
-2. *add more*
+1. Fixed error regarding change settings input.
+2. Implemented generate a random map each playthrough.
+3. Added attribute output.
 
 ## Problems Encountered & Solutions
+1. The issue with the zombie not attacking the alien within range was due to the fact that the zombie was only checking on one block instead of all the blocks within the range. The solution was to modify the code to make the zombie check all blocks within the range.
 
-Describe the problems encountered and provide the solutions / plan for the solutions.
+2. The problem with the zombie's movements was that it was going out of the border, and the code was overly complex. The solution was to update the code so that the zombie would only move towards certain objects around the map.
+
+3. Users were able to change arrows to any direction they wanted, even if the arrow did not exist on the map. This problem was resolved by implementing an error message that would prevent users from changing arrows that do not exist.
+
+4. A random attribute would randomize each turn. It was fixed by calling the function before displayIntro in main.
+
+5. The problem of the zombie spawning in place of the alien was fixed by ensuring that the alien was placed first in the map before the zombie.
+
+6. The removeTrail function was not removing the trails with the correct coordinates. The solution was to develop a specific formula that would ensure the function removed the correct trails by matching the correct symbol ('.').
